@@ -1,4 +1,4 @@
-package Greedy.D3;
+package Algorithm.Greedy.D3;
 
 import java.io.FileInputStream;
 import java.util.Arrays;

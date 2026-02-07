@@ -1,4 +1,4 @@
-package Simulation.D2;
+package Algorithm.Simulation.D2;
 
 import java.util.*;
 
