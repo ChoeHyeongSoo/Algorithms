@@ -1,21 +1,71 @@
-import java.util.Scanner;
+import java.util.*;
 
-class Solution
-{
-    public static void main(String args[]) throws Exception
-    {
-        //System.setIn(new FileInputStream("res/input.txt"));
+class Solution {
+    /*
+    N*N 크기의 도시에 홈방범 서비스를 제공하려고 한다.
+    운영 비용은 서비스 영역의 면적과 동일하며, 아래와 같이 구할 수 있다. 운영 영역의 크기 K 는 1 이상의 정수이다.
+    운영 비용 = K * K + (K - 1) * (K - 1) (*도시를 벗어난 영역에 서비스를 제공해도 운영 비용은 변경되지 않는다.)
+     - K = 1 일 때, 운영 비용은 1 이다.
+     - K = 2 일 때, 운영 비용은 5 이다.
+     - K = 3 일 때, 운영 비용은 13 이다.
+     도시의 크기 N과 하나의 집이 지불할 수 있는 비용 M, 도시의 정보가 주어진다.
+     이때, 손해를 보지 않으면서 홈방범 서비스를 가장 많은 집들에 제공하는 서비스 영역을 찾고,
+     그 때의 홈방범 서비스를 제공 받는 집들의 수를 출력하는 프로그램을 작성하라.
+     */
+    public static void main(String args[]) throws Exception {
+//        System.setIn(new FileInputStream("input.txt"));
 
         Scanner sc = new Scanner(System.in);
         int T;
-        T=sc.nextInt();
+        T = sc.nextInt();
 
-        for(int test_case = 1; test_case <= T; test_case++)
-        {
+        for (int test_case = 1; test_case <= T; test_case++) {
+            int n = sc.nextInt();
+            int m = sc.nextInt();   // k^2 + (k-1)^2 <= m*houses
+
+            int[][] city = new int[n][n];
+            int total_home = 0;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    city[i][j] = sc.nextInt();
+                    if (city[i][j]==1) total_home++;
+                }
+            }
+
+            // 내림차순 탐색
+            int k = (int)(1+Math.sqrt(1-2*(1-total_home*m)))/ 2;
+            int cost = k*k + (k-1)*(k-1);
+            while (k>1) {   // k^2 + (k-1)^2 <= m * home 만족하는 home 찾기
+
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        int home = 0;
+                        if (city[i][j]==1) home++;
+
+                        int range = k-1;
+                        while (range > 0) {
+                            // 0+-range,0 0, 0+-range
+//                            if (i+range > o)  // 범위 설정도 다시.......
+                            if (city[i+range][j+k-1-range]==1) home++;  // [3][0]   - [2][1]    - [1][2]
+                            if (city[i-range][j+k-1-range]==1) home++;  // [-3][0]  - [-2][1]   - [-1][2]
+                            // i, j 위치 똑바로
+                            if (city[i+k-1-range][i+range]==1) home++;  // [0][3]   - [1][2]    - [2][1]
+                            if (city[j+k-1-range][i-range]==1) home++;  // [0][-3]  - [1][-2]   - [2][-1]
+                            range--;
+                        }
 
 
-            System.out.println("#" + test_case + " " + ans);
+                    }
+                }
+
+
+            }
+
+
+
+//            System.out.println("#" + test_case + " " + sb);
         }
-    }
 
+
+    }
 }
