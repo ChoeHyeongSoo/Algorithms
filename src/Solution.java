@@ -35,24 +35,29 @@ class Solution {
             // 내림차순 탐색
             int k = (int)(1+Math.sqrt(1-2*(1-total_home*m)))/ 2;
             int cost = k*k + (k-1)*(k-1);
+            int home = 0;
             while (k>1) {   // k^2 + (k-1)^2 <= m * home 만족하는 home 찾기
 
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
-                        int home = 0;
+                        home = 0;
                         if (city[i][j]==1) home++;
 
                         int range = k-1;
                         while (range > 0) {
                             // 0+-range,0 0, 0+-range
-//                            if (i+range > o)  // 범위 설정도 다시.......
+                            if (i+range < n)  // 범위 설정도 다시.......
                             if (city[i+range][j+k-1-range]==1) home++;  // [3][0]   - [2][1]    - [1][2]
-                            if (city[i-range][j+k-1-range]==1) home++;  // [-3][0]  - [-2][1]   - [-1][2]
-                            // i, j 위치 똑바로
-                            if (city[i+k-1-range][i+range]==1) home++;  // [0][3]   - [1][2]    - [2][1]
-                            if (city[j+k-1-range][i-range]==1) home++;  // [0][-3]  - [1][-2]   - [2][-1]
+                            if (i-range >= 0)
+                                if (city[i-range][j+k-1-range]==1) home++;  // [-3][0]  - [-2][1]   - [-1][2]
+                            if (j+range < n)
+                            if (city[i+k-1-range][j+range]==1) home++;  // [0][3]   - [1][2]    - [2][1]
+                            if (j-range >= 0)
+                            if (city[i+k-1-range][j-range]==1) home++;  // [0][-3]  - [1][-2]   - [2][-1]
                             range--;
                         }
+
+                        if (cost <= m*home) break;
 
 
                     }
