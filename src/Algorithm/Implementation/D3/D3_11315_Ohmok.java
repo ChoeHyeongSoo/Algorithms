@@ -1,4 +1,4 @@
-package Algorithm.Implematation.D3;
+package Algorithm.Implementation.D3;
 
 import java.util.Scanner;
 
@@ -6,7 +6,7 @@ class D3_11315_Ohmok {    // cnt로 풀 것 !! 대신, RangeofIndex 조심
 
     public static void main(String args[]) throws Exception {
 
-        //  System.setIn(new FileInputStream("res/input.txt"));
+        //  System.setIn(new FileInputStream("res/input_D3_SW_8th_Cipher.txt"));
 
         Scanner sc = new Scanner(System.in);
         int T;

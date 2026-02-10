@@ -1,4 +1,4 @@
-package Algorithm.Implematation.D3;
+package Algorithm.Implementation.D3;
 
 import java.io.FileInputStream;
 import java.util.Scanner;
@@ -16,7 +16,7 @@ class D3_SW_Basic_5th_Magnetic {
     - 그 다음 줄부터 100 x 100크기의 테이블의 초기 모습이 주어진다. 1은 N극 성질을 가지는 자성체를 2는 S극 성질을 가지는 자성체를 의미하며 테이블의 윗부분에 N극이 아래부분에 S극이 위치한다고 가정한다.
      */
     public static void main(String args[]) throws Exception {
-        System.setIn(new FileInputStream("res/input_SW_Basic_5th_Magnetic.txt"));
+        System.setIn(new FileInputStream("Algorithm/Implementation/input_D3_SW_Basic_5th_Magnetic.txt"));
 
         Scanner sc = new Scanner(System.in);
         int T;

@@ -1,4 +1,4 @@
-package Algorithm.Implematation.D4;
+package Algorithm.Implementation.D4;
 
 import java.util.Scanner;
 import java.util.Stack;
@@ -7,7 +7,7 @@ class D4_5432_CutBars { // Stack의 예시 : boolean을 통해서 스위치 동�
 
     public static void main(String args[]) throws Exception {
 
-//         System.setIn(new FileInputStream("res/input.txt"));
+//         System.setIn(new FileInputStream("res/input_D3_SW_8th_Cipher.txt"));
 
         Scanner sc = new Scanner(System.in);
         int T;

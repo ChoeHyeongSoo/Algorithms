@@ -1,4 +1,4 @@
-package Algorithm.Implematation.D3;
+package Algorithm.Implementation.D3;
 
 import java.io.FileInputStream;
 import java.util.LinkedList;

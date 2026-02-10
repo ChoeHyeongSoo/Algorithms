@@ -1,4 +1,4 @@
-package Algorithm.Implematation.D2;
+package Algorithm.Implementation.D2;
 
 import java.util.Scanner;
 
@@ -19,7 +19,7 @@ public class D2_1926_Game369 {
 
     public static void main(String args[]) throws Exception {
 
-//         System.setIn(new FileInputStream("res/input.txt"));
+//         System.setIn(new FileInputStream("res/input_D3_SW_8th_Cipher.txt"));
 
         Scanner sc = new Scanner(System.in);
         int T;
