@@ -1,3 +1,4 @@
+import java.io.FileInputStream;
 import java.util.*;
 
 class Solution {
@@ -13,7 +14,7 @@ class Solution {
      그 때의 홈방범 서비스를 제공 받는 집들의 수를 출력하는 프로그램을 작성하라.
      */
     public static void main(String args[]) throws Exception {
-//        System.setIn(new FileInputStream("input.txt"));
+        System.setIn(new FileInputStream("res/sample_input.txt"));
 
         Scanner sc = new Scanner(System.in);
         int T;
@@ -28,49 +29,45 @@ class Solution {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     city[i][j] = sc.nextInt();
-                    if (city[i][j]==1) total_home++;
+                    if (city[i][j] == 1) total_home++;
                 }
             }
 
             // 내림차순 탐색
-            int k = (int)(1+Math.sqrt(1-2*(1-total_home*m)))/ 2;
-            int cost = k*k + (k-1)*(k-1);
+            int k = (int) (1 + Math.sqrt(1 - 2 * (1 - total_home * m))) / 2;
+            int cost = k * k + (k - 1) * (k - 1);
             int home = 0;
-            while (k>1) {   // k^2 + (k-1)^2 <= m * home 만족하는 home 찾기
+
+            while (k > 1) {   // k^2 + (k-1)^2 <= m * home 만족하는 home 찾기
 
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
                         home = 0;
-                        if (city[i][j]==1) home++;
+                        if (city[i][j] == 1) home++;
 
-                        int range = k-1;
+                        int range = k - 1;
                         while (range > 0) {
-                            // 0+-range,0 0, 0+-range
-                            if (i+range < n)  // 범위 설정도 다시.......
-                            if (city[i+range][j+k-1-range]==1) home++;  // [3][0]   - [2][1]    - [1][2]
-                            if (i-range >= 0)
-                                if (city[i-range][j+k-1-range]==1) home++;  // [-3][0]  - [-2][1]   - [-1][2]
-                            if (j+range < n)
-                            if (city[i+k-1-range][j+range]==1) home++;  // [0][3]   - [1][2]    - [2][1]
-                            if (j-range >= 0)
-                            if (city[i+k-1-range][j-range]==1) home++;  // [0][-3]  - [1][-2]   - [2][-1]
+                            // 0+-range,0 0, 0+-range : 4*(k-1)회 반복
+                            // 0,-3 / 1,-2 / 2, -1 / 3, 0 / 2, 1 / ~ "|x| + |y| = k-1"
+                            int[] dr = {1, 0, -1, 0}, dc = {0, 1, 0, -1};
+                            for (int each = 0; each < 4; each++) {
+                                for (int dir = 0; dir < k; dir++) {
+                                    if (city[i+dr[dir]][j+dc[dir]]==1) home++;
+                                }
+                            }
+
                             range--;
                         }
-
-                        if (cost <= m*home) break;
-
-
+                        if (cost <= m * home) break;
                     }
                 }
 
-
+                k--;
             }
 
 
-
-//            System.out.println("#" + test_case + " " + sb);
+            System.out.println("#" + test_case + " " + home);
         }
-
 
     }
 }
