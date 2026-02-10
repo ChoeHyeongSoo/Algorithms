@@ -49,10 +49,14 @@ class Solution {
                         while (range > 0) {
                             // 0+-range,0 0, 0+-range : 4*(k-1)회 반복
                             // 0,-3 / 1,-2 / 2, -1 / 3, 0 / 2, 1 / ~ "|x| + |y| = k-1"
-                            int[] dr = {1, 0, -1, 0}, dc = {0, 1, 0, -1};
-                            for (int each = 0; each < 4; each++) {
-                                for (int dir = 0; dir < k; dir++) {
-                                    if (city[i+dr[dir]][j+dc[dir]]==1) home++;
+                            
+                                for (int dir = 0; dir < k-1; dir++) { //|x| + |y| = k-1 & 부호와 값 전부 다르게
+                                    int[] dr = {range - dir, -dir, -(range - dir), dir}, dc = {dir, range - dir, -dir, -(range - dir)};
+                        
+
+                                    for (int each = 0; each < 4; each++) {
+                                        // define i+dr, j+dc range cond 
+                                    if (city[i+dr[each]][j+dc[each]]==1) home++;
                                 }
                             }
 
