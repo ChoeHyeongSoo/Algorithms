@@ -2,7 +2,7 @@ package Algorithm.Simulation.D4;
 
 import java.util.Scanner;
 
-class D4_2117_HomeSecurity {
+class D4_2117_HomeSecurity_dirVector {
     /*
     N*N 크기의 도시에 홈방범 서비스를 제공하려고 한다.
     운영 비용은 서비스 영역의 면적과 동일하며, 아래와 같이 구할 수 있다. 운영 영역의 크기 K 는 1 이상의 정수이다.
