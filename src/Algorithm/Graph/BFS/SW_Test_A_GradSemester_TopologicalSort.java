@@ -46,11 +46,9 @@ class SW_Test_A_GradSemester_TopologicalSort{
             int semester = 0;
 
             outer:
-            while (!q.isEmpty()) {
+            while (!q.isEmpty()) {  // 전체 사이클, 다음 사이클을 위해 추가되는 게 없으면 종료
 
-                int curr = 0;
-
-                while (!q.isEmpty()) {
+                while (!q.isEmpty()) {  // 현재 iter : 위상이 0인 노드의 자식 노드 위상 낮추기
 
                     int tmp = q.poll();
 
@@ -58,20 +56,20 @@ class SW_Test_A_GradSemester_TopologicalSort{
 
                         degree[child]--;
 
-                        if (degree[child] == 0) {
+                        if (degree[child] == 0) {   // 자식 노드의 위상 0이 되면 다음 사이클 offer 대기
                             next.offer(child);
                         }
                     }
                 }
 
-                while(!next.isEmpty())
+                while(!next.isEmpty())      // 위상이 0이 된 자식 노드로 다음 사이클 진입
                     q.offer(next.poll());
 
                 semester++;
             }
 
             for (int i = 1; i < n; i++) {
-                if (degree[i] != 0) {
+                if (degree[i] != 0) {       // 전체 사이클이 종료됐음에도 위상이 남아있으면 불가능
                     semester = -1;
                     break;
                 }
