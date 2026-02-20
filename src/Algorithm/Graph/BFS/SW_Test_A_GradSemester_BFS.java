@@ -1,3 +1,5 @@
+package Algorithm.Graph.BFS;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -17,11 +19,11 @@ class Subject {
     }
 }
 
-public class Test {
+class SW_Test_A_GradSemester_BFS{
 
     public static void main(String[] args) throws Exception {
 
-        System.setIn(new FileInputStream("res/input_A1_Subject.txt"));
+        System.setIn(new FileInputStream("res/Algorithm/Graph/BFS/input_SW_Test_A_GradSemester.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int T;
@@ -37,36 +39,33 @@ public class Test {
 
             for (int i = 1; i <= n; i++) {
                 StringTokenizer st = new StringTokenizer(br.readLine());
-                int cur_cnt = Integer.parseInt(st.nextToken());
-                int[] pre = new int[cur_cnt];
-                for (int p = 0; p < cur_cnt; p++)
+                int pre_cnt = Integer.parseInt(st.nextToken());
+                int[] pre = new int[pre_cnt];     // 선행과목 수만큼 배열 생성
+                for (int p = 0; p < pre_cnt; p++)
                     pre[p] = Integer.parseInt(st.nextToken());
-                Subject curr = new Subject(i, cur_cnt, pre);
-//                subjects[i] = curr;
-//                Lec[cur_cnt][i] = curr;
+                Subject curr = new Subject(i, pre_cnt, pre);
+//                subjects[i] = curr; Lec[pre_cnt][i] = curr;
 
-                if (L[cur_cnt]==null)
-                    L[cur_cnt] = new ArrayList<>();
-                L[cur_cnt].add(curr);
+                if (L[pre_cnt]==null)
+                    L[pre_cnt] = new ArrayList<>();
+                L[pre_cnt].add(curr);
 
-                if (cur_cnt==0) {   // L[0]이 null이면 init_cnt==0이라는 의미
-                    init_cnt++;
-                }
+                if (pre_cnt ==0) init_cnt++;  // L[0]이 null이면 init_cnt==0이라는 의미
             }
 
             int[] complete = new int[n+2];          // boolean[] -> int[] 해당 학기 체크 위해서 - 현재 학기 보다 이전으로 기록된 건 이번 학기에 방문처리 가능
             boolean[] done_list = new boolean[n+2]; // 방문배열이나 map 등 사이클마다 변화 체크를 하는 경우, 전 사이클과 이번 사이클의 배열을 완전 분리하는 게 오류 감소
 
-
+            // 큐를 활용한 bfs 시작
             Deque<Subject> dq = new LinkedList<>();
-            int done = 0;
 
-            for (int i = 0; i < init_cnt; i++) {
+            int done = 0;
+            int semester = -1;
+
+            for (int i = 0; i < init_cnt; i++) {    // 첫 학기 초기에 처리
                 done++;
                 done_list[L[0].get(i).title] = true;    // complete[L[0].get(i).title] = 1;
             }
-
-            int semester = -1;
 
             if (done > 0) {     // 0이 없는 경우 건너뛰기
                 semester = 1;
@@ -85,7 +84,7 @@ public class Test {
 
     }
 
-    private static int getSemester_Queue(Deque<Subject> dq, int n, boolean[] done_list, int semester, int done, List<Subject>[] L) {
+    public static int getSemester_Queue(Deque<Subject> dq, int n, boolean[] done_list, int semester, int done, List<Subject>[] L) {
 
         // semester 처리 .. 다음 학기 semester와
         // 이수한 과목 수 추가 / 이번 사이클에 처리한 과목 수 = 0 탈출, 증가하면 증가한 만큼 추가
@@ -94,7 +93,7 @@ public class Test {
 
         outer:
         while (!dq.isEmpty()) {
-            int curr = 0;                // 이번 사이클의 수강 완료 가능 수
+            int curr = 0;                // 이번 사이클의 수강 완료 수
             int[] curr_idx = new int[n]; // 사이클 종료 후 방문처리 하기 위한 인덱스 배열
 
             int loop_size = dq.size();   // #!) 아래 for문 dq.size()동안 루프했는데, poll하면 감소돼서 대기 중인 과목 처리x
