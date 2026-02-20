@@ -1,4 +1,4 @@
-package Algorithm.DFS;
+package Algorithm.Graph.DFS;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
