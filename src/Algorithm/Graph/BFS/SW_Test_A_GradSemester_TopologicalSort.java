@@ -35,7 +35,8 @@ class SW_Test_A_GradSemester_TopologicalSort{
             }
 
             Deque<Integer> q = new LinkedList<>();
-            Deque<Integer> next = new LinkedList<>();
+            Deque<Integer> next = new LinkedList<>();   // next와 next_list 동일하게 작동
+            ArrayList<Integer> next_list = new ArrayList<>();
             int semester = 0;
 
             for (int i = 1; i <= n; i++) {
@@ -44,7 +45,6 @@ class SW_Test_A_GradSemester_TopologicalSort{
                 }
             }
 
-            outer:
             while (!q.isEmpty()) {  // 전체 사이클, 다음 사이클을 위해 추가되는 게 없으면 종료
 
                 while (!q.isEmpty()) {  // 현재 iter : 위상이 0인 노드의 자식 노드 위상 낮추기
@@ -57,12 +57,16 @@ class SW_Test_A_GradSemester_TopologicalSort{
 
                         if (degree[child] == 0) {   // 자식 노드의 위상 0이 되면 다음 사이클 offer 대기
                             next.offer(child);
+                            next_list.add(child);
                         }
                     }
                 }
 
                 while(!next.isEmpty())      // 위상이 0이 된 자식 노드로 다음 사이클 진입
                     q.offer(next.poll());
+
+                for (int idx : next_list)
+                    q.offer(idx);
 
                 semester++;
             }
@@ -76,7 +80,5 @@ class SW_Test_A_GradSemester_TopologicalSort{
 
             System.out.println("#" + tc + " " + semester);
         }
-
     }
-
 }
