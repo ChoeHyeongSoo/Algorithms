@@ -36,14 +36,13 @@ class SW_Test_A_GradSemester_TopologicalSort{
 
             Deque<Integer> q = new LinkedList<>();
             Deque<Integer> next = new LinkedList<>();
+            int semester = 0;
 
             for (int i = 1; i <= n; i++) {
                 if (degree[i]==0) {
                     q.offer(i);
                 }
             }
-
-            int semester = 0;
 
             outer:
             while (!q.isEmpty()) {  // 전체 사이클, 다음 사이클을 위해 추가되는 게 없으면 종료

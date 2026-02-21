@@ -86,11 +86,6 @@ class SW_Test_A_GradSemester_BFS{
 
     public static int getSemester_Queue(Deque<Subject> dq, int n, boolean[] done_list, int semester, int done, List<Subject>[] L) {
 
-        // semester 처리 .. 다음 학기 semester와
-        // 이수한 과목 수 추가 / 이번 사이클에 처리한 과목 수 = 0 탈출, 증가하면 증가한 만큼 추가
-        int done_v = 0;   // 선행과목수가 done이하인 건 queue에 투입 - 이미 들어간 것과 새로 들어갈 것을 어떻게 구분할 것인가? 전부 빼고 방문처리 된 거 제외 다시 넣기?
-        // 직전 사이클에 투입된 거 기록한 뒤 그 이후 것들 queue에 추가 -? done에 기록, done과 curr로 각 사이클마다 큐에 들어갈 것 구분
-
         outer:
         while (!dq.isEmpty()) {
             int curr = 0;                // 이번 사이클의 수강 완료 수
