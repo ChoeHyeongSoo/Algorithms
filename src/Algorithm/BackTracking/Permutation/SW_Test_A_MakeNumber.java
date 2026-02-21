@@ -27,23 +27,20 @@ class SW_Test_A_MakeNumber {
         System.setIn(new FileInputStream("res/Algorithm/BackTracking/Permutation/input_SW_Test_A_MakeNumber.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-//        Scanner sc = new Scanner(System.in);
         int T = Integer.parseInt(br.readLine());
 
         for (int test_case = 1; test_case <= T; test_case++) {
-//            StringTokenizer st = new StringTokenizer(br.readLine());
             int n = Integer.parseInt(br.readLine());
             StringTokenizer st = new StringTokenizer(br.readLine());
-//            Operator[] operators = new Operator[n-1];
             int[] operators = new int[4];
-//            Deque<Integer> numbers = new ArrayDeque<>();
             int[] numbers = new int[n];
+
             for (int i = 0; i < 4; i++) {
                 operators[i] = Integer.parseInt(st.nextToken());
             }
+
             st = new StringTokenizer(br.readLine());
             for (int i = 0; i < n; i++) {
-//                numbers.addLast(Integer.parseInt(st.nextToken()));
                 numbers[i] = Integer.parseInt(st.nextToken());
             }
 
@@ -96,9 +93,3 @@ class SW_Test_A_MakeNumber {
     }
 
 }
-
-/*  Sample Input
-
-
-
- */
