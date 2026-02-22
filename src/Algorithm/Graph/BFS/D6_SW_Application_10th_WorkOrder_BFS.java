@@ -59,12 +59,10 @@ class D6_SW_Application_10th_WorkOrder_BFS {
                     if (in_degree[c]==0)    // 선행작업이 0이 되면 큐에 삽입
                         q.offer(c);
                 }
-
                 sb.append(tmp + " ");
             }
 
             System.out.println("#" + test_case + " " + sb);
         }
     }
-
 }

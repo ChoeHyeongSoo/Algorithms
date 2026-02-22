@@ -50,7 +50,6 @@ class D6_SW_Application_10th_WorkOrder_DFS {
             while (!s.isEmpty())
                 sb.append(s.pop() + " ");
 
-
             System.out.println("#" + test_case + " " + sb);
         }
     }
