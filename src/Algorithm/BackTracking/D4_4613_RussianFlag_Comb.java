@@ -39,12 +39,7 @@ class D4_4613_RussianFlag_Combination {
                 if (flag[n - 1].charAt(i) != 'R') cnt++;
             }
 
-            int[][] color = getColors(n, m, flag);
-            int[][] cost = new int[n][3];
-            for (int r = 1; r < n - 1; r++) {
-                for (int i = 0; i < 3; i++)
-                    cost[r][i] = m - color[r][i];
-            }
+            int[][] cost = get_color_cost(n, m, flag);
 
             min_cost = Integer.MAX_VALUE;
             int[] boundary = new int[2];    // 파랑영역 시작, 빨강영역 시작의 범위를 조합
@@ -85,9 +80,9 @@ class D4_4613_RussianFlag_Combination {
         return total_cost;
     }
 
-    private static int[][] getColors(int n, int m, String[] flag) {
+    private static int[][] get_color_cost(int n, int m, String[] flag) {
 
-        int[][] color_state = new int[n][3];    // 0: W, 1: B, 2: R
+        int[][] cost = new int[n][3];    // 0: W, 1: B, 2: R
 
         for (int i = 1; i <= n - 2; i++) {
             int wht = 0, blue = 0, red = 0;
@@ -107,11 +102,11 @@ class D4_4613_RussianFlag_Combination {
                         break;
                 }
             }
-            color_state[i][0] = wht;
-            color_state[i][1] = blue;
-            color_state[i][2] = red;
+            cost[i][0] = m - wht;
+            cost[i][1] = m - blue;
+            cost[i][2] = m - red;
         }
-        return color_state;
+        return cost;
     }
 }
 
