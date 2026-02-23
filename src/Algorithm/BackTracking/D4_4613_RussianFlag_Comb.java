@@ -56,19 +56,6 @@ class D4_4613_RussianFlag_Combination {
         }
     }
 
-    public static int getCosts(int[] boundary, int[][] cost) {
-
-        int total_cost = 0;
-
-        for (int i = 0; i < cost.length - 1; i++) {
-            if (i < boundary[0]) total_cost += cost[i][0];      // 흰색 영역
-            else if (i < boundary[1]) total_cost += cost[i][1]; // 파란색 영역
-            else total_cost += cost[i][2];                      // 빨간색 영역
-        }
-
-        return total_cost;
-    }
-
     static int min_cost;
 
     public static void combination(int cnt, int start, int n, int[] boundary, int[][] cost) {
@@ -83,6 +70,19 @@ class D4_4613_RussianFlag_Combination {
             boundary[cnt] = i;
             combination(cnt + 1, i + 1, n, boundary, cost);
         }
+    }
+
+    public static int getCosts(int[] boundary, int[][] cost) {
+
+        int total_cost = 0;
+
+        for (int i = 0; i < cost.length - 1; i++) {
+            if (i < boundary[0]) total_cost += cost[i][0];      // 흰색 영역
+            else if (i < boundary[1]) total_cost += cost[i][1]; // 파란색 영역
+            else total_cost += cost[i][2];                      // 빨간색 영역
+        }
+
+        return total_cost;
     }
 
     private static int[][] getColors(int n, int m, String[] flag) {
