@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-class SW_Test_A_HoneySales {
+class SW_Test_A_HoneySales { // 2115.
     /*
     N*N 개의 벌통이 정사각형 모양으로 배치되어 있다.
     각 벌통에 있는 꿀의 양이 주어졌을 때, 다음과 같은 과정으로 벌꿀을 채취하여 최대한 많은 수익을 얻으려고 한다.
