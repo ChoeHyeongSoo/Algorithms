@@ -1,6 +1,7 @@
 package Algorithm.Simulation;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -14,6 +15,7 @@ class SW_Test_A_TreasureBoxPW {
     (서로 다른 회전 횟수에서 동일한 수가 중복으로 생성될 수 있다. 크기 순서를 셀 때 같은 수를 중복으로 세지 않도록 주의한다.)
     */
     public static void main(String args[]) throws Exception {
+        System.setIn(new FileInputStream("res/Algorithm/Simulation/input_SW_Test_A_TreasureBoxPW.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
         for (int test_case = 1; test_case <= T; test_case++) {
