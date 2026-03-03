@@ -23,5 +23,8 @@
 hs_err_pid*
 replay_pid*
 
+# Prevent Git Staging
+*.out/
+
 #작업시 백준 폴더 제외
 *.백준/
