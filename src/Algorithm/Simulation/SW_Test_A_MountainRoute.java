@@ -17,7 +17,7 @@ class SW_Test_A_MountainRoute {
     N * N 크기의 지도가 주어지고, 최대 공사 가능 깊이 K가 주어진다. 이때 만들 수 있는 가장 긴 등산로를 찾아 그 길이를 출력하는 프로그램을 작성하라.
     */
     public static void main(String args[]) throws Exception {
-        System.setIn(new FileInputStream("res/Algorithm/Simulation/input_SW_A_MountainRoute.txt"));
+        System.setIn(new FileInputStream("res/Algorithm/Simulation/input_SW_Test_A_MountainRoute.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
 
