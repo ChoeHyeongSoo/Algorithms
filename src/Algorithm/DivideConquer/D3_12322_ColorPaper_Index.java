@@ -2,10 +2,9 @@ package Algorithm.DivideConquer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-class D3_12322_ColorPaper_ArrayDivide {
+class D3_12322_ColorPaper_IndexDivide {
     /*
     여러개의 정사각형칸들로 이루어진 정사각형 모양의 종이가 주어져 있고, 각 정사각형들은 하얀색으로 칠해져 있거나 파란색으로 칠해져 있다.
     주어진 종이를 일정한 규칙에 따라 잘라서 다양한 크기를 가진 정사각형 모양의 하얀색 또는 파란색 색종이를 만들려고 한다.
@@ -30,42 +29,33 @@ class D3_12322_ColorPaper_ArrayDivide {
                     paper[i][j] = Integer.parseInt(st.nextToken());
             }
 
-            int[] cnt = new int[2]; // 0: White, 1: Blue
-            cut(n, paper, cnt);
+            cnt[0] = 0; cnt[1] = 0;
+            cut(0, 0, n, paper);
             System.out.println("#" + test_case + " " + cnt[0] + " " + cnt[1]);
         }
     }
 
-    public static void cut (int w, int[][] paper, int[] cnt){
+    static int[] cnt = new int[2];
+    public static void cut (int start_r, int start_c, int w, int[][] paper){
         // 기저 조건: 길이가 1이 되면 종료
         if (w == 1) {
-            if (paper[0][0]==0) cnt[0]++;
+            if (paper[start_r][start_c]==0) cnt[0]++;
             else cnt[1]++;
             return;
         }
 
         // 중단 조건 : 모두 파랑 or 모두 하양
         int all = 0;
-        for (int[] r : paper)
-            all += Arrays.stream(r).sum();
+        for (int i = start_r; i < start_r+w; i++)
+            for (int j = start_c; j < start_c+w; j++)
+                all += paper[i][j];
 
         if (all == 0) {cnt[0]++; return;}
         if (all == w*w) {cnt[1]++; return;}
 
-        // 배열 넘겨 받기, 넘겨 받은 배열을 4등분
-        int[][][] divided_paper = new int[4][w / 2][w / 2]; // 0~3에 하나씩
-
-        for (int i = 0; i < w/2; i++) {
-            for (int j = 0; j < w/2; j++) {
-                divided_paper[0][i][j] = paper[i][j];
-                divided_paper[1][i][j] = paper[i][w/2+j];
-                divided_paper[2][i][j] = paper[w/2+i][j];
-                divided_paper[3][i][j] = paper[w/2+i][w/2+j];
-            }
-        }
-
-        for (int i = 0; i < 4; i++) {
-            cut(w/2, divided_paper[i], cnt); // 4개 모두 재귀
-        }
+        cut(start_r, start_c, w/2, paper);
+        cut(start_r, start_c+w/2, w/2, paper);
+        cut(start_r+w/2, start_c, w/2, paper);
+        cut(start_r+w/2, start_c+w/2, w/2, paper);
     }
 }
