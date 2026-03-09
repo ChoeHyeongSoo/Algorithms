@@ -1,103 +1,111 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
 class Solution {
-    /*
-
-     */
     public static void main(String args[]) throws Exception {
         StringBuilder ans = new StringBuilder();
+        System.setIn(new FileInputStream("res/input_SW_Test_A_Proc.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
         for (int test_case = 1; test_case <= T; test_case++) {
             ans.append("#").append(test_case).append(" ");
             StringTokenizer st = new StringTokenizer(br.readLine());
+
             n = Integer.parseInt(st.nextToken());
-            connection = new boolean[n][n];
-            cores = new ArrayList<>();
+            connection = new boolean[n][n]; 	cores = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 st = new StringTokenizer(br.readLine());
                 for (int j = 0; j < n; j++) {
                     int tmp = Integer.parseInt(st.nextToken());
-                    if (tmp==1) {
+                    if (tmp == 1) {
                         Core tmp_core = new Core(i, j);
-                        if (i==0 || i==n-1 || j==0 || j==n-1) tmp_core.is_connected = true;
-                        else {
-                            tmp_core.each[0] = new Line(0, n - 1 - i);
-                            tmp_core.each[1] = new Line(1, n - 1 - j);
-                            tmp_core.each[2] = new Line(2, i);
-                            tmp_core.each[3] = new Line(3, j);
-                        }
+                        if (i == 0 || i == n - 1 || j == 0 || j == n - 1) { // 거리 0인 애들 계산 x
+                            connection[i][j] = true;
+                            continue;
+                        }   // 거리 미리 계산
+                        tmp_core.each[0] = new Line(0, n - 1 - i);
+                        tmp_core.each[1] = new Line(1, n - 1 - j);
+                        tmp_core.each[2] = new Line(2, i);
+                        tmp_core.each[3] = new Line(3, j);
                         cores.add(tmp_core);
                         connection[i][j] = true;
                     }
                 }
             }
 
-            // 리스트에 코어 번호, 방향, 거리 담아서 for i=0~n-1 / for (j=i+1)~ ?
+            max_cnt = 0; min_line = Integer.MAX_VALUE;
+            subset(0, 0, 0);
 
-            min_line = Integer.MAX_VALUE; max_core = Integer.MIN_VALUE;
-            perm(0);
-
-            ans.append('\n');
+            ans.append(min_line).append('\n');
         }
         System.out.print(ans);
     }
 
     static List<Core> cores;
     static boolean[][] connection;
-    static int min_line, max_core, n;
     static int[] dir_r = {1, 0, -1, 0}, dir_c = {0, 1, 0, -1};
+    static int n, min_line, max_cnt;
 
-    public static void perm(int line) {
 
-        if (line > min_line) return;
-//        if (depth==cores.size()) {min_line = Math.min(min_line, line); return;} // 연결 안 되는 케이스 존재
+    public static void subset(int depth, int line, int cnt) {
 
-        for (int i = 0; i < cores.size(); i++) {
+        if (cnt + cores.size() - depth < max_cnt) return;  // 부분 집합 원소 포텐셜이 최대보다 낮을 때 중단
 
-            if (cores.get(i).is_connected) continue;
-            Arrays.sort(cores.get(i).each);
-            Core tmp = cores.get(i);
-            int r = tmp.r, c= tmp.c;
-            for (int dir = 0; dir < 4; dir++) {
-                if (visit(tmp.each[dir].dir, r, c, i)) line+=tmp.each[dir].distance;
-            }
-
+        if (depth == cores.size()) {    // 기저 조건
+            if (cnt > max_cnt) {
+                min_line = line;
+                max_cnt = cnt;
+            } else if (cnt == max_cnt) min_line = Math.min(min_line, line);
+            return;
         }
 
+        Core curr = cores.get(depth);
+        Arrays.sort(curr.each); // 최단거리 순으로 탐색
+        for (int d = 0; d < 4; d++) {
+            int dir = curr.each[d].dir;   // curr,each[d].dir : 미리 저장해둔 방향 (정렬하면 index와 방향 불일치하므로)
+            if (visit(dir, curr.r, curr.c)) {   //    	''			.distance:   ''        거리
+                subset(depth + 1, line + curr.each[d].distance, cnt+1);   // Include
+                check(dir, curr.r, curr.c, false);
+            }
+        }
+
+        subset(depth+1, line, cnt);   // Exclude
     }
 
-    public static boolean visit(int dir, int r, int c, int idx) {
+    public static boolean visit(int dir, int r, int c) { // 연결 가능 여부 반환: 가능하면 방문 처리까지
 
-        int nextR = r, nextC = c;
+        int nextR = r + dir_r[dir], nextC = c + dir_c[dir];
 
-        if (nextR >= 0 && nextR < n && nextC >= 0 && nextC < n) {
+        while (nextR >= 0 && nextR < n && nextC >= 0 && nextC < n) {
+
+            if (connection[nextR][nextC]) return false;     // 불가능 반환
 
             nextR += dir_r[dir];
             nextC += dir_c[dir];
-
-            if (connection[nextR][nextC])
-                return false;
         }
 
-        switch (dir) {
-            case 0:
-                for (int i = r+1; i < n; i++) connection[i][c] = true;
-                break;
-            case 1:
-                for (int i = c+1; i < n; i++) connection[r][i] = true;
-                break;
-            case 2:
-                for (int i = r-1; i >= 0; i--) connection[i][c] = true;
-                break;
-            case 3:
-                for (int i = c-1; i >= 0; i--) connection[r][i] = true;
-                break;
-        }
+        check(dir, r, c, true); // 방향 별 방문처리
 
         return true;
+    }
+
+    public static void check(int dir, int r, int c, boolean is) {   // 방문 처리, 복구 함수
+        switch (dir) {
+            case 0:
+                for (int i = r + 1; i < n; i++) connection[i][c] = is;
+                break;
+            case 1:
+                for (int i = c + 1; i < n; i++) connection[r][i] = is;
+                break;
+            case 2:
+                for (int i = r - 1; i >= 0; i--) connection[i][c] = is;
+                break;
+            case 3:
+                for (int i = c - 1; i >= 0; i--) connection[r][i] = is;
+                break;
+        }
     }
 }
 
@@ -112,7 +120,7 @@ class Core {
     }
 }
 
-class Line implements Comparable<Line>{
+class Line implements Comparable<Line> {
     int dir, distance;
 
     public Line(int dir, int distance) {
