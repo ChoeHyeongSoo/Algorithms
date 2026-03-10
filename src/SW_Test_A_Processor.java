@@ -3,7 +3,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-class Solution {
+class SW_Test_A_Processor {    // 1767
     public static void main(String args[]) throws Exception {
         StringBuilder ans = new StringBuilder();
         System.setIn(new FileInputStream("res/input_SW_Test_A_Proc.txt"));
