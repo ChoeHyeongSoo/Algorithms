@@ -1,4 +1,4 @@
-package Algorithm.BitMasking;
+package Algorithm.Implementation.D3;
 
 import java.util.Scanner;
 
