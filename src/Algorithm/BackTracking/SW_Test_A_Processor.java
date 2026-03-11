@@ -8,7 +8,7 @@ import java.util.*;
 class SW_Test_A_Processor {    // 1767
     public static void main(String args[]) throws Exception {
         StringBuilder ans = new StringBuilder();
-        System.setIn(new FileInputStream("res/input_SW_Test_A_Proc.txt"));
+        System.setIn(new FileInputStream("Algorithm/BackTracking/input_SW_Test_A_Processor.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
         for (int test_case = 1; test_case <= T; test_case++) {
