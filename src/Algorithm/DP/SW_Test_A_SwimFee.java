@@ -1,4 +1,7 @@
+package Algorithm.DP;
+
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
@@ -8,6 +11,7 @@ class SW_Test_A_SwimFee {
      */
     public static void main(String args[]) throws Exception {
         StringBuilder ans = new StringBuilder();
+        System.setIn(new FileInputStream("Algorithm/DP/input_SW_Test_A_SwimFee.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
         for (int test_case = 1; test_case <= T; test_case++) {
@@ -19,23 +23,21 @@ class SW_Test_A_SwimFee {
             st =  new StringTokenizer(br.readLine());
             plans = new int[13];
             for (int i = 1; i <= 12; i++)
-                plans[i] = Integer.parseInt(st.nextToken());
-
-            int[] pay = new int[4];
-            int[] sedal = new int[11];
-            for (int i = 1; i <= 10; i++) {
-                int cnt = 0;
-                for (int j = i; j < i+3; j++)
-                    if (plans[j]>0) cnt++;
-                sedal[i] = cnt; // 세달이 2인거는 3달-1달-1일 비교
-            }
+                plans[i] = Integer.parseInt(st.nextToken());  // 큐에 입력받기?
 
             // Compare
+            int[] dp = new int[13];
+            dp[1] = Math.min(plans[1]*fee[0], fee[1]);
+            dp[2] = dp[1] + Math.min(plans[2]*fee[0], fee[1]);
+            for (int i = 3; i <= 12; i++) {
 
+                int a = dp[i-1] + Math.min(plans[i]*fee[0], fee[1]);
+                int b = dp[i-3] + fee[2];
+                dp[i] = Math.min(a, b);
+            }
 
-
-
-            ans.append('\n');
+            int pay = Math.min(fee[3], dp[12]);
+            ans.append(pay).append('\n');
         }
         System.out.print(ans);
     }
