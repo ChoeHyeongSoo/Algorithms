@@ -12,12 +12,12 @@ class Solution {
             ans.append("#").append(test_case).append(" ");
             StringTokenizer st = new StringTokenizer(br.readLine());
             n = Integer.parseInt(st.nextToken());
-            map = new char[n][n]; board = new int[n][n];
+            map = new char[n][n]; board = new int[n][n]; v = new boolean[n][n];
             bombs = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 map[i] = br.readLine().toCharArray();
                 for (int j = 0; j < n; j++)
-                    if (map[i][j]=='*') bombs.add(i*n+j);
+                    if (map[i][j]=='*') {bombs.add(i*n+j); v[i][j] = true;}
             }
 
             make_board();     // 숫자판 만들기
@@ -31,6 +31,7 @@ class Solution {
     static int n;
     static char[][] map;
     static int[][] board;
+    static boolean[][] v;
     static List<Integer> bombs;
     static int[] dir_r = {1, 1, 0, -1, -1, -1, 0, 1}, dir_c = {0, 1, 1, 1, 0, -1, -1, -1};
 
@@ -55,7 +56,6 @@ class Solution {
 
     public static int BFS() {
 
-        boolean[][] v = new boolean[n][n];
         Deque<Integer> q = new ArrayDeque<>();
         int cnt = 0;
         for (int i = 0; i < n; i++) {
@@ -80,8 +80,6 @@ class Solution {
                 }
             }
         }
-
-        for (int key : bombs) v[key/n][key%n] = true;
 
         for (boolean[] r : v)
             for (boolean b : r)
