@@ -30,7 +30,6 @@ class Solution {
             int cnt = 1;
 
             for (int i = 1; i < L; i++) {
-                // 시간마다 while문 한 사이클, 다음에 추가될 건 별도의 자료구조에
                 while (!q.isEmpty()) {
                     position curr = q.poll();
                     // 방향은 dir[tunnel].length 동안 dir[tunnel][d]로 반복
@@ -59,46 +58,10 @@ class Solution {
     static int[][] dir_c = {{0}, {0, 0, 1, -1}, {0, 0}, {1, -1}, {0, 1}, {0, 1}, {0, -1}, {0, -1}};
     static int[][] map;
 
-    public static boolean is_connected(int r, int c, int curr, int dir) {
-
-        int next = map[r][c];
-
-        switch (curr) {
-            case 1:
-                if (dir==0 && (next==1 || next==2 || next==4 || next==7)) return true;
-                if (dir==1) for (int d : dir_r[next]) if (d==1) return true;
-                if (dir==2 && (next==1 || next==3 || next==6 || next==7)) return true;
-                if (dir==3) for (int d : dir_c[next]) if (d==1) return true;
-                break;
-            case 2:
-                if (dir==0) for (int d : dir_r[next]) if (d==-1) return true;
-                if (dir==1) for (int d : dir_r[next]) if (d==1) return true;
-            case 3:
-                if (dir==0) for (int d : dir_c[next]) if (d==-1) return true;
-                if (dir==1) for (int d : dir_c[next]) if (d==1) return true;
-            case 4:
-                if (dir==0) for (int d : dir_r[next]) if (d==1) return true;
-                if (dir==1) for (int d : dir_c[next]) if (d==-1) return true;
-            case 5:
-                if (dir==0) for (int d : dir_r[next]) if (d==-1) return true; // 그만;
-                if (dir==1) for (int d : dir_r[next]) if (d==1) return true;
-            case 6:
-                if (dir==0) for (int d : dir_r[next]) if (d==-1) return true;
-                if (dir==1) for (int d : dir_r[next]) if (d==1) return true;
-            case 7:
-                if (dir==0) for (int d : dir_r[next]) if (d==-1) return true;
-                if (dir==1) for (int d : dir_r[next]) if (d==1) return true;
-        }
-
-        return false;
-    }
-
     public static boolean is_connected_s(int r, int c, int curr, int dir) {
 
         int next = map[r][c];
-
-        int case1 = dir_r[curr][dir];
-        int case2 = dir_c[curr][dir];
+        int case1 = dir_r[curr][dir],  case2 = dir_c[curr][dir];
 
         if (case1!=0) {
             for (int d_r : dir_r[next])
