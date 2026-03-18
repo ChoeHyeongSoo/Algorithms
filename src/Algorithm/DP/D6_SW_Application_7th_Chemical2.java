@@ -2,10 +2,7 @@ package Algorithm.DP;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 class D6_SW_Application_7th_Chemical2 {
     /*
@@ -21,7 +18,7 @@ class D6_SW_Application_7th_Chemical2 {
             n = Integer.parseInt(st.nextToken());
             map = new int[n][n];
             v = new boolean[n][n];
-            matrix = new ArrayList<>();
+            matrix = new HashMap<>();
 
             for (int i = 0; i < n; i++) {
                 st = new StringTokenizer(br.readLine());
@@ -34,43 +31,35 @@ class D6_SW_Application_7th_Chemical2 {
                 for (int j = 0; j < n; j++)
                     if (!v[i][j]&&map[i][j]>0) define(i, j);
 
-            // 2. 곱 순서 정의 : 간선화
-            k = matrix.size();
-            List<Integer> edges = new LinkedList<>();
-            boolean[] check = new boolean[k];
-            edges.add(0); check[0] = true;
-            while (edges.size() < k) {
-                for (int i = 1; i < k; i++) {
-                    if (check[i]) continue;
-                    position curr = matrix.get(i);
-                    if (curr.a==edges.getLast()) {
-                        edges.addLast(i);
-                        check[i] = true;
-                    } else if (curr.b==edges.getFirst()) {
-                        edges.addFirst(i);
-                        check[i] = true;
+            // 2. 곱 순서 정의
+            m = matrix.size();
+            int[] sequence = new int[m+1];
+            for (int key : matrix.keySet()) if (!matrix.containsValue(key)) sequence[0] = key;
+            for (int i = 1; i <= m; i++)
+                sequence[i] = matrix.get(sequence[i-1]);
+
+            // 3. 최소 찾기 : (B*A)*C = ((24) 40) / B*(A*C) = (30 (60)) !!!MST로 만들면 되지 않을까? A x B * B x C / i-j 가중치 A x B x C
+            // AxB BxC CxD ABCD : 구간 점화식 - 시작부터 m까지 k 기준으로 덩어리 분할
+            int[][] table = new int[m][m]; // 첫 시작 k개: 원소-1 번 행렬곱 발생, k-1!번 경우의 수 존재: 누구를 먼저 선택하느냐!를 기준으로 각 점화식
+            for (int cnt = 2; cnt < m; cnt++) {
+                for (int i = 0; i < i+cnt; i++) {
+                    for (int pivot = 1; pivot < m; pivot++) {
+                        
                     }
                 }
             }
 
-            // 3. 최소 찾기 : (B*A)*C = ((24) 40) / B*(A*C) = (30 (60)) !!!MST로 만들면 되지 않을까? A x B * B x C / i-j 가중치 A x B x C
-            int matmul_cnt = 0;
-            int[] sequence = new int[k];
-            for (int i = 0; i < k; i++) sequence[i] = edges.get(i);
 
 
-            int[][] table = new int[k-1][k]; // 원소-1 번 행렬곱 발생, k-1!번 경우의 수 존재: 누구를 먼저 선택하느냐!를 기준으로 각 점화식
-
-
-            ans.append(matmul_cnt).append('\n');
+            ans.append("").append('\n');
         }
         System.out.print(ans);
     }
 
     static int[][] map;
-    static int n, k;
+    static int n, m;
     static boolean[][] v;
-    static List<position> matrix;
+    static Map<Integer, Integer> matrix;
 
     public static void define(int r, int c) {
 
@@ -85,15 +74,6 @@ class D6_SW_Application_7th_Chemical2 {
             for (int j = c; j <= b; j++)
                 v[i][j] = true;
 
-        matrix.add(new position(a-r+1, b-c+1));
-    }
-}
-
-class position {
-    int a, b;
-
-    public position(int a, int b) {
-        this.a = a;
-        this.b = b;
+        matrix.put(a-r+1, b-c+1);
     }
 }
