@@ -8,39 +8,33 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
-        map = new int[n][3];
-        for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < 3; j++) map[i][j] = Integer.parseInt(st.nextToken());
+
+        int[][] prev = new int[5][2]; // 0: Max, 1: Min
+        int[][] curr = new int[5][2];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= 3; i++) {              // DP 위한 초기화
+            int k = Integer.parseInt(st.nextToken());
+            for (int j = 0; j < 2; j++) prev[i][j] = k;
         }
+        prev[0][0] = prev[4][0] = -1;
+        prev[0][1] = prev[4][1] = Integer.MAX_VALUE;
 
-        int[][] prev = new int[3][2]; // 0: Max, 1: Min
-        int[][] curr = new int[3][2];
-
-        for (int i = 0; i < 3; i++) {   // Init
-            prev[i][0] = map[0][i];
-            prev[i][1] = map[0][i];
+        for (int i = 1; i < n; i++) {
+            st = new StringTokenizer(br.readLine());    // 각 층 점화식
+            for (int idx = 1; idx <= 3; idx++) {
+                int k = Integer.parseInt(st.nextToken());
+                curr[idx][0] = k + Math.max(prev[idx][0], Math.max(prev[idx+1][0], prev[idx-1][0]));
+                curr[idx][1] = k + Math.min(prev[idx][1], Math.min(prev[idx+1][1], prev[idx-1][1]));
+            }
+            for (int idx = 1; idx <= 3; idx++) {
+                prev[idx][0] = curr[idx][0];
+                prev[idx][1] = curr[idx][1];
+            }
         }
-
-        for (int f = 1; f < n; f++) {
-            curr[0][0] = Math.max(prev[0][0], prev[1][0]) + map[f][0];
-            curr[1][0] = Math.max(Math.max(prev[0][0], prev[1][0]), prev[2][0]) + map[f][1];
-            curr[2][0] = Math.max(prev[1][0], prev[2][0]) + map[f][2];
-
-            curr[0][1] = Math.min(prev[0][1], prev[1][1]) + map[f][0];
-            curr[1][1] = Math.min(Math.min(prev[0][1], prev[1][1]), prev[2][1]) + map[f][1];
-            curr[2][1] = Math.min(prev[1][1], prev[2][1]) + map[f][2];
-
-            for (int i = 0; i < 3; i++)
-                for (int j = 0; j < 2; j++)
-                    prev[i][j] = curr[i][j];
-        }
-
-        int max = Math.max(Math.max(prev[0][0], prev[1][0]), prev[2][0]);
-        int min = Math.min(Math.min(prev[0][1], prev[1][1]), prev[2][1]);
-
+        
+        int max = Math.max(Math.max(prev[1][0], prev[2][0]), prev[3][0]);
+        int min = Math.min(Math.min(prev[1][1], prev[2][1]), prev[3][1]);
         System.out.println(max + " " + min);
     }
-
-    static int[][] map;
 }
