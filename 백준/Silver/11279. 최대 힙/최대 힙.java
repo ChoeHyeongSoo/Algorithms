@@ -8,21 +8,17 @@ public class Main{
         n = Integer.parseInt(st.nextToken());
         heap = new long[n];
         idx = 0; sb = new StringBuilder();
-        for (int i = 0; i < n; i++)
-            operation(Integer.parseInt(br.readLine()));
+        for (int i = 0; i < n; i++) {
+            long x = Long.parseLong(br.readLine());
+            if (x==0) out();
+            else in(x);
+        }
         System.out.println(sb);
     }
     static int n, idx;
     static long[] heap;
     static StringBuilder sb;
 
-    public static void operation(long x) {
-        if (x==0) {
-            if (idx==0) sb.append(0).append('\n');
-            else sb.append(heap[0]).append('\n');    // 부모 idx -1 / 2 | 자식 +1 * 2, '' -1
-            out();
-        } else in(x);
-    }
     public static void in(long x) {
         heap[idx] = x;
         int curr_idx = idx++;
@@ -33,7 +29,8 @@ public class Main{
     }
 
     public static void out() {
-        if (idx==0) return;
+        if (idx==0) { sb.append(0).append('\n'); return; }
+        sb.append(heap[0]).append('\n');
         int curr_idx = 0;
         heap[curr_idx] = heap[--idx];
         while(curr_idx*2+1 < idx) {
