@@ -19,29 +19,34 @@ public class Main{
             for (int i = 0; i < m; i++) {
                 st = new StringTokenizer(br.readLine());
                 int curr = Integer.parseInt(st.nextToken()), next = Integer.parseInt(st.nextToken()), weight = Integer.parseInt(st.nextToken());
-                if (curr==g&&next==h || curr==h&&next==h) must = weight;
+                if (curr==g&&next==h || curr==h&&next==g) must = weight;
                 adj[curr].add(new Node(next, weight)); adj[next].add(new Node(curr, weight));
             }
             int[] candidate = new int[t];
             for (int i = 0; i < t; i++) candidate[i] = Integer.parseInt(br.readLine());
             Arrays.sort(candidate); // 오름차순 출력 위한 정렬
+
+            int path_g2h = dijkstra(s, g) + must;
+            int path_h2g = dijkstra(s, h) + must;
             for (int e : candidate) {
-                int min = dijkstra(s, e);
-//                if (ok) {
-//                    ok = false;
-//                    sb.append(e).append(" ");
-//                    continue;
-//                }
-                int compare1 = dijkstra_fixed(s, g) + must + dijkstra(h, e);
-                int compare2 = dijkstra_fixed(s, h) + must + dijkstra(g, e);
+                min = dijkstra(s, e);
+                if (path_g2h > min && path_h2g > min) {
+                    sb.append(e).append(" ");
+                    continue;
+                }
+                int compare1 = path_g2h + dijkstra(h, e);
+                int compare2 = path_h2g + dijkstra(g, e);
                 if (compare1==min || compare2==min) sb.append(e).append(" ");
             } sb.append('\n');
         }
         System.out.println(sb);
     }
     static int n, s, g, h;
-    static boolean ok;
     static List<Node>[] adj;
+    static int min;
+    static int[] costs_g;
+    static int[] costs_h;
+
 
     public static int dijkstra(int s, int e) {
         PriorityQueue<Node> pq = new PriorityQueue<>(); // g,h 방문 안 한 상태로 후보지 들어오면 컨티뉴
@@ -52,32 +57,31 @@ public class Main{
         while (!pq.isEmpty()) {
             Node curr = pq.poll();
             if (curr.idx==e) {
-                if (curr.v_g && curr.v_h) ok = true;
                 return costs[curr.idx];
             }
             for (Node next : adj[curr.idx]) {
                 if (costs[curr.idx]+ next.d <= costs[next.idx]) {
                     costs[next.idx] = costs[curr.idx]+ next.d;
-                    Node in = new Node(next.idx, costs[next.idx]);
-                    in.v_g = next.idx == g || curr.idx == g || curr.v_g;
-                    in.v_h = next.idx == h || curr.idx == h || curr.v_h;
-                    pq.add(in);
+                    pq.add(new Node(next.idx, costs[next.idx]));
                 }
             }
         }
         return -1;
     }
 
-    public static int dijkstra_fixed(int s, int e) {
+    public static int dijkstra_fixed(int s, int mid) {
         PriorityQueue<Node> pq = new PriorityQueue<>(); // g,h 방문 안 한 상태로 후보지 들어오면 컨티뉴
         int[] costs = new int[n + 1];
         Arrays.fill(costs, Integer.MAX_VALUE);
         pq.add(new Node(s, 0));
         costs[s] = 0;
+        int tmp_idx = 0;
         while (!pq.isEmpty()) {
             Node curr = pq.poll();
             if (curr.d > costs[curr.idx]) continue;
-            if (curr.idx==e) return costs[curr.idx];
+            if (curr.idx==g) {
+                tmp_idx = g; break;
+            }
             for (Node next : adj[curr.idx]) {
                 if (costs[curr.idx]+ next.d <= costs[next.idx]) {
                     costs[next.idx] = costs[curr.idx]+ next.d;
