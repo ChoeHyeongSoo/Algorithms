@@ -11,7 +11,7 @@ public class PrefixSum{
         for (int i = 0; i < n; i++) arr[i] = Long.parseLong(br.readLine());
         prefix_sum_TopDown = new SegmentTree(arr);
         prefix_sum_BottomUp = new SegmentTree_BottomUp(arr);
-//        top_down();
+        top_down();
         bottom_up();
         System.out.println(sb);
     }
