@@ -12,24 +12,25 @@ public class Main{
         int[] road = new int[100001];
         Arrays.fill(road, Integer.MAX_VALUE);
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        road[n] = 0; pq.offer(n);
+        PriorityQueue<int[]> pq = new PriorityQueue<>( (a, b) -> Integer.compare(a[1], b[1]));
+        road[n] = 0; pq.offer(new int[]{n, 0});
 
         while (!pq.isEmpty()) {
 
-            int curr = pq.poll();
+            int[] curr = pq.poll();
+            if (curr[0]==k) break;
 
-            if (curr+1 <= 100000 && road[curr+1] > road[curr]+1) {  // +1 logic
-                road[curr+1] = road[curr]+1;
-                pq.offer(curr+1);
+            if (curr[0]+1 <= 100000 && road[curr[0]+1] > curr[1]+1) {  // +1 logic
+                road[curr[0]+1] = curr[1]+1;
+                pq.offer(new int[]{curr[0]+1, curr[1]+1});
             }
-            if (curr-1 >= 0 && road[curr-1] > road[curr]+1) {   // -1 logic
-                road[curr-1] = road[curr]+1;
-                pq.offer(curr-1);
+            if (curr[0]-1 >= 0 && road[curr[0]-1] > curr[1]+1) {   // -1 logic
+                road[curr[0]-1] = curr[1]+1;
+                pq.offer(new int[]{curr[0]-1, curr[1]+1});
             }
-            if (curr>0 && curr*2 <= 100000 && road[curr*2] > road[curr]) {  // *2 logic
-                road[curr*2] = road[curr];
-                pq.offer(curr*2);
+            if (curr[0]>0 && curr[0]*2 <= 100000 && road[curr[0]*2] > curr[1]) {  // *2 logic
+                road[curr[0]*2] = curr[1];
+                pq.offer(new int[]{curr[0]*2, curr[1]});
             }
         }
         System.out.println(road[k]);
