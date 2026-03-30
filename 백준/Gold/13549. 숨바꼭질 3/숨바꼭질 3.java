@@ -20,6 +20,11 @@ public class Main{
             int[] curr = pq.poll();
             if (curr[0]==k) break;
 
+            if (curr[0]>0 && curr[0]*2 <= 100000 && road[curr[0]*2] > curr[1]) {  // *2 logic
+                road[curr[0]*2] = curr[1];
+                pq.offer(new int[]{curr[0]*2, curr[1]});
+            }
+            
             if (curr[0]+1 <= 100000 && road[curr[0]+1] > curr[1]+1) {  // +1 logic
                 road[curr[0]+1] = curr[1]+1;
                 pq.offer(new int[]{curr[0]+1, curr[1]+1});
@@ -27,10 +32,6 @@ public class Main{
             if (curr[0]-1 >= 0 && road[curr[0]-1] > curr[1]+1) {   // -1 logic
                 road[curr[0]-1] = curr[1]+1;
                 pq.offer(new int[]{curr[0]-1, curr[1]+1});
-            }
-            if (curr[0]>0 && curr[0]*2 <= 100000 && road[curr[0]*2] > curr[1]) {  // *2 logic
-                road[curr[0]*2] = curr[1];
-                pq.offer(new int[]{curr[0]*2, curr[1]});
             }
         }
         System.out.println(road[k]);
