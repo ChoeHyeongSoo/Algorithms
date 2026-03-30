@@ -34,12 +34,12 @@ public class Main{
             while (!q.isEmpty()) {
 
                 int curr = q.poll();
-                if (curr == 100) break main_loop;
+                if (curr == 100) break main_loop;   // 조기종료
 
                 for (int i = 6; i >= 1; i--) {
                     int next = curr + i;
 
-                    if (next > 100 || visit[next] < cnt) continue;
+                    if (next > 100 || visit[next] < cnt) continue;  // 최단거리 보장
                     visit[next] = Math.min(visit[next], cnt);
                     if (map[next] > 0) {
                         next = map[next];
@@ -49,7 +49,7 @@ public class Main{
                 }
             }
             cnt++;
-            while (!in.isEmpty()) q.offer(in.poll());
+            while (!in.isEmpty()) q.offer(in.poll());   // 레벨 확인을 위해 이번 단계와 다음 단계 분리
         }
         System.out.println(cnt);
     }
