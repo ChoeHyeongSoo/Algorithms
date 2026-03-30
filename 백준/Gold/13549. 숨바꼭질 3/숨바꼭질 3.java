@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
+
 public class Main{
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -12,26 +11,25 @@ public class Main{
         int[] road = new int[100001];
         Arrays.fill(road, Integer.MAX_VALUE);
 
-        PriorityQueue<int[]> pq = new PriorityQueue<>( (a, b) -> Integer.compare(a[1], b[1]));
-        road[n] = 0; pq.offer(new int[]{n, 0});
+        Deque<Integer> q = new ArrayDeque<>();  // 0-1 BFS : 가중치가 0-1로 이뤄진 상황에서 다익스트라!
+        road[n] = 0; q.offer(n);
 
-        while (!pq.isEmpty()) {
+        while (!q.isEmpty()) {
 
-            int[] curr = pq.poll();
-            if (curr[0]==k) break;
+            int curr = q.poll();
+            if (curr==k) break;
 
-            if (curr[0]>0 && curr[0]*2 <= 100000 && road[curr[0]*2] > curr[1]) {  // *2 logic
-                road[curr[0]*2] = curr[1];
-                pq.offer(new int[]{curr[0]*2, curr[1]});
+            if (curr>0 && curr*2 <= 100000 && road[curr*2] > road[curr]) {  // *2 logic
+                road[curr*2] = road[curr];
+                q.addFirst(curr*2);     // 가중치 0은 addFirst
             }
-            
-            if (curr[0]+1 <= 100000 && road[curr[0]+1] > curr[1]+1) {  // +1 logic
-                road[curr[0]+1] = curr[1]+1;
-                pq.offer(new int[]{curr[0]+1, curr[1]+1});
+            if (curr+1 <= 100000 && road[curr+1] > road[curr]+1) {  // +1 logic
+                road[curr+1] = road[curr]+1;
+                q.addLast(curr+1);          // 가중치 1은 addLast
             }
-            if (curr[0]-1 >= 0 && road[curr[0]-1] > curr[1]+1) {   // -1 logic
-                road[curr[0]-1] = curr[1]+1;
-                pq.offer(new int[]{curr[0]-1, curr[1]+1});
+            if (curr-1 >= 0 && road[curr-1] > road[curr]+1) {   // -1 logic
+                road[curr-1] = road[curr]+1;
+                q.addLast(curr-1);
             }
         }
         System.out.println(road[k]);
