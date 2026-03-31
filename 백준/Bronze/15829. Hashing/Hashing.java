@@ -7,11 +7,13 @@ public class Main{
         StringTokenizer st = new StringTokenizer(br.readLine());
         n = Integer.parseInt(st.nextToken());
         String line = br.readLine();
-        int hash = 0;
+        long pow = 1;
+        long mod = 1234567891;
+        long hash = 0;
         for (int i = 0; i < n; i++) {
             int curr = line.charAt(i)-'a'+1;
-            for (int j = 0; j < i; j++) curr = (curr * 31) % 1234567891;
-            hash+=curr;
+            hash = (hash + (curr*pow))%mod;
+            pow = (pow*31) % mod;
         }
         System.out.println(hash);
     }
