@@ -10,7 +10,8 @@ public class Main{
         int hash = 0;
         for (int i = 0; i < n; i++) {
             int curr = line.charAt(i)-'a'+1;
-            hash += curr*(int)Math.pow(31, i)%1234567891;
+            for (int j = 0; j < i; j++) curr = (curr * 31) % 1234567891;
+            hash+=curr;
         }
         System.out.println(hash);
     }
