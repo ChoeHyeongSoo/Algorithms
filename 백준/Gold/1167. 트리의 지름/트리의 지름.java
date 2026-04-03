@@ -20,21 +20,43 @@ public class Main{
                adj[curr].add(new Node(target, dist));
            }
         }
-        dist = new int[v+1];
-        Arrays.fill(dist, -1);
-        l = 0; idx = 0;
-        bfs(1);
+//        dist = new int[v+1];  // 아무 노드에서나 가장 먼 노드 탐색
+//        Arrays.fill(dist, -1);
+//        l = 0; idx = 0;
+//        bfs(1);
+//        l = 0;
+//        dist = new int[v+1];  // 거리 초기화
+//        Arrays.fill(dist, -1);
+//        bfs(idx);             // 먼 녿 기준으로 거리 계산
+//        System.out.println(l);
+        visit = new boolean[v+1];   // 아무 노드에서나 가장 먼
+        dfs(1, 0);
         l = 0;
-        dist = new int[v+1];
-        Arrays.fill(dist, -1);
-        bfs(idx);
+        visit = new boolean[v+1];
+        dfs(idx, 0);
         System.out.println(l);
     }
     static int v, l, idx;
     static int[] dist;
+    static boolean[] visit;
     static List<Node>[] adj;
 
-    static void bfs(int tmp) {
+    static void dfs(int curr, int d) {
+
+        visit[curr] = true;
+
+        if (d > l) {
+            l = d;
+            idx = curr;
+        }
+
+        for (Node next : adj[curr]) {
+            if (visit[next.v]) continue;
+            dfs(next.v, d + next.dist);
+        }
+    }
+
+    static void bfs(int tmp) {  // 740ms
 
         Deque<Integer> q = new ArrayDeque<>();
         q.offer(tmp); dist[tmp] = 0;
