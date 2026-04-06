@@ -18,7 +18,7 @@ public class Main{
         st = new StringTokenizer(br.readLine());
         s = Integer.parseInt(st.nextToken()); e = Integer.parseInt(st.nextToken());
         dist = new int[n+1]; Arrays.fill(dist, Integer.MAX_VALUE);
-        parents = new int[n+1];
+        parents = new int[n+1]; // 인덱스에 직전 경로 저장
         PriorityQueue<Node> pq = new PriorityQueue<>((a, b)->a.dist - b.dist);
         Node init = new Node(s, 0);
         dist[s] = 0; pq.offer(init);
@@ -38,7 +38,7 @@ public class Main{
 
                 if (dist[next.idx] <= dist[curr.idx]+next.dist) continue; // next까지 가는 거리 중 최소가 되는 건 어느 경로든 상관 x
                 dist[next.idx] = dist[curr.idx]+next.dist;
-                parents[next.idx] = curr.idx;
+                parents[next.idx] = curr.idx;   // 현재 지점의 최단 거리가 어느 지점에서 왔는지 인덱스 저장
                 Node candidate = new Node(next.idx, dist[next.idx]);
 
                 pq.offer(candidate);
@@ -55,8 +55,8 @@ public class Main{
         ans.append(dist[e]).append('\n');
 
         int idx = e;
-        Stack<Integer> s = new Stack<>();
-        while (idx>0) {
+        Stack<Integer> s = new Stack<>(); // s ~ e 를 순서대로 출력하기 위해 stack 사용
+        while (idx>0) { // s까지 넣고 나면 s는 0이 저장되어 있으므로, 0이 조건
             s.push(idx);
             idx = parents[idx];
         }
