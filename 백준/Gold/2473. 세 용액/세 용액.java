@@ -20,6 +20,7 @@ public class Main{
         for (int i = 0; i < n-2; i++) {
             int l = i+1, r = n-1;
             long curr = samples[i];
+            while (l < r){
                 long left = samples[l], right = samples[r];
                 long sum = curr+left+right;
 
