@@ -24,8 +24,10 @@ public class Main{
         int pos1 = dist_s[v1] + dist_v1[v2] + dist_v2[n];
         int pos2 = dist_s[v2] + dist_v2[v1] + dist_v1[n];
         int result = (Math.min(pos1, pos2) >= INF) ? -1 : Math.min(pos1, pos2);
-        System.out.println(result);
-//        System.out.println(dijk_bitmasking(1, n));
+//        System.out.println(result);
+
+        //2. 비트마스킹 + 다익스트라 : 비트마스킹을 활용한 상태 처리
+        System.out.println(dijk_bitmasking(1, n));
     }
 
     static int n, e, v1, v2;
@@ -58,20 +60,22 @@ public class Main{
     static int dijk_bitmasking(int start, int end) {
 
         PriorityQueue<int[]> pq = new PriorityQueue<>((a, b)->a[1]-b[1]);
-        int[][] dist = new int[n+1][4];
+        int[][] dist = new int[n+1][1<<2]; // 거쳐야 할 노드가 2개 이므로 1<<2(4)
         for (int[] r : dist) Arrays.fill(r, INF);
-        pq.offer(new int[]{start, 0, 0});
-        int init_state = (start==v1)?1:(start==v2)?2:0;
+
+        int init_state = (start==v1)?1:(start==v2)?2:0; // 1이 v1, v2에 포함되는 케이스 처리
+        pq.offer(new int[]{start, 0, init_state});
         dist[start][init_state] = 0;
 
         while (!pq.isEmpty()) {
-            int[] curr = pq.poll();
-            if (curr[0]==end && curr[2]==3) return curr[1];
+            int[] curr = pq.poll(); // 0: idx, 1: cost, 2: state
+            
+            if (curr[0]==end && curr[2]==3) return curr[1]; // end에서 state 모두 처리라면 반환
             if (dist[curr[0]][curr[2]] < curr[1]) continue;
 
             for (int i = 1; i <= n; i++) {
                 if (adj[curr[0]][i] == 0) continue;
-                int state = (curr[2] | (i==v1?1:i==v2?2:0));
+                int state = (curr[2] | (i==v1?1:i==v2?2:0));    // bitmasking
                 if (dist[i][state] <= curr[1]+adj[curr[0]][i]) continue;
                 dist[i][state] = curr[1] + adj[curr[0]][i];
                 pq.offer(new int[]{i, dist[i][state], state});
