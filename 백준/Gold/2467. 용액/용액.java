@@ -13,7 +13,21 @@ public class Main{
         // 1. -부터 하나 고른 뒤 최소값에 가까운 값을 찾도록 이분탐색
         min = Long.MAX_VALUE; ans = new long[2];
         for (int i = 0; i < n-1; i++) {
-            binary_search(i+1, n-1, samples[i]);
+            int left = i+1, right = n-1;
+            long curr = samples[i];
+            while (left <= right){          // while_loop : 시간 비교
+                int mid = (left+right)/2;
+                long target = samples[mid];
+
+                if (Math.abs(curr+target) < Math.abs(min)){
+                    min = curr+target;
+                    ans[0] = curr; ans[1] = target;
+                }
+
+                if (curr+target == 0) break;
+                else if (curr+target < 0) left = mid+1;
+                else right = mid-1;
+            }
         }
         System.out.println(ans[0] + " " + ans[1]);
     }
@@ -21,7 +35,7 @@ public class Main{
     static long min;
     static long[] samples, ans;
     
-    public static void binary_search(int s, int e, long curr) {
+    public static void binary_search(int s, int e, long curr) { // recursive
         
         if (s>e) return;
 
