@@ -20,7 +20,7 @@ public class Main{
         for (int i = 0; i < n-2; i++) {
             int l = i+1, r = n-1;
             long curr = samples[i];
-            while (l < r){
+            while (l < r){    // 하나를 찾는 이분 탐색 : l<=r 가능 / 2개를 찾아야 한다 ? l==r 케이스 생겨선 안 된다.
                 long left = samples[l], right = samples[r];
                 long sum = curr+left+right;
 
