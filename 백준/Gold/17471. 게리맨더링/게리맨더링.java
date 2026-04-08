@@ -30,7 +30,7 @@ public class Main{
             // 연결이라면 인구수 카운팅 - 전체 인구수 - 비트마스킹 구연 인구수 * 2
             if (!(group_a&&group_b)) continue;
             int population = 0;
-            for (int i = 1; i <= n; i++) if ((bit&(1<<(i-1)))!=0) population+=p[i];
+            for (int i = 1; i <= n; i++) if ((bit&(1<<(i-1)))!=0) population+=p[i]; // bit와 인덱스-1의 위치 확인 (1: 0001, 2: 0010(1<<1))
             ans = Math.min(ans, Math.abs(total - 2*population));
         }
         System.out.println(ans!=Integer.MAX_VALUE ? ans : -1);
@@ -41,19 +41,20 @@ public class Main{
 
     static boolean is_connected(int bit) {
 
-        int threshold = Integer.bitCount(bit), init = Integer.numberOfTrailingZeros(bit & (-bit))+1;
+        // Integer. 라이브러리 활용 : 비트 카운팅 / 0의 개수(LSB(최하위비트) 뒤 : bit & (-bit)
+        int threshold = Integer.bitCount(bit), init = Integer.numberOfTrailingZeros(bit & (-bit))+1; // *bit<->index 간 1의 차이 주의!
 
         Deque<Integer> q = new ArrayDeque<>();
         boolean[] visit = new boolean[n+1];
         visit[init]=true; q.offer(init);
-        int cnt = 1;
+        int cnt = 1;    // 카운트도 1부터
 
         while (!q.isEmpty()) {
             int curr = q.poll();
 
             for (int k : adj[curr]) {
 
-                if ((bit&(1<<(k-1)))==0) continue;
+                if ((bit&(1<<(k-1)))==0) continue; // 인덱스 자리의 비트가 꺼져있다면 연결 x
                 if (visit[k]) continue;
 
                 visit[k] = true;
