@@ -23,21 +23,21 @@ public class Main{
     static int[][] cost;
     static int[][] dp;
 
-    public static int tsp(int idx, int state) {
+    public static int tsp(int idx, int state) { // DFS와 동일
 
-        if (state == (1<<n)-1) {
+        if (state == (1<<n)-1) {   // 기저 조건 : 모두 방문 n개의 비트 활성화 = cnt==n
             if (cost[idx][1] == 0) return INF;
             return cost[idx][1];
         }
 
-        if (dp[idx][state] != -1) return dp[idx][state];
+        if (dp[idx][state] != -1) return dp[idx][state]; // -1로 초기화 : 이미 처리된 곳은 재방문 x = 다익스트라 생각!
 
-        dp[idx][state] = INF;
+        dp[idx][state] = INF; // 최소값 갱신 위해 INF로 설정
 
-        for (int next = 1; next <= n; next++) {
-            if (cost[idx][next]==0 || (state & (1<<(next-1)))!=0) continue;
+        for (int next = 1; next <= n; next++) { // 간선을 받을 때, 1~N으로 배열에 받았다면 bit와 인덱스 꼬이는 걸 주의!
+            if (cost[idx][next]==0 || (state & (1<<(next-1)))!=0) continue; // 연결이 안 되어 있거나, 방문(visit[next]==true)했으면 스킵
 
-            int next_cost = tsp(next, state | (1<<(next-1)));
+            int next_cost = tsp(next, state | (1<<(next-1))); // 1<<next로 쓰고 싶다면 1번 노드를 arr[0]에 할당, idx를 0부터 생각
             dp[idx][state] = Math.min(dp[idx][state], cost[idx][next] + next_cost);
         }
 
