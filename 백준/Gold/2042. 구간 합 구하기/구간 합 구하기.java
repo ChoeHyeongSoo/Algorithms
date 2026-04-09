@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 public class Main{
     public static void main(String[] args) throws Exception {
@@ -9,39 +10,43 @@ public class Main{
         k = Integer.parseInt(st.nextToken());
         arr = new long[n];  // k번째처럼 인덱스 위주의 문제는 n+1로 설정하고, 트리 생성할 때도 1~n으로 범위 잡아주는 게 편리
         for (int i = 0; i < n; i++) arr[i] = Long.parseLong(br.readLine());
-//        SegmentTree prefix_sum = new SegmentTree(arr);
-        prefix_sum = new SegmentTree_BottomUp(arr);
+//        TopDown = new SegmentTree(arr);
+//        BottomUp = new SegmentTree_BottomUp(arr);
+        BIT = new FenwickTree(arr);
+
 //        top_down();
-        bottom_up();
+//        bottom_up();
+        Fenwick();
         System.out.println(sb);
     }
 
     static int n, m, k;
     static long[] arr;
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
-//    static SegmentTree prefix_sum;
-    static SegmentTree_BottomUp prefix_sum;
+    static StringBuilder sb = new StringBuilder();
+    static SegmentTree TopDown;
+    static SegmentTree_BottomUp BottomUp;
+    static FenwickTree BIT;
 
-//    public static void top_down() throws Exception{
-//        for (int i = 0; i < m+k; i++) {
-//            st = new StringTokenizer(br.readLine());
-//            int option = Integer.parseInt(st.nextToken()), target = Integer.parseInt(st.nextToken());
-//            switch (option) {
-//                case 1:
-//                    long change = Long.parseLong(st.nextToken()); // 주의! 변한값이 아니라 변화량을 반영해야 한다.
-//                    long diff = change - arr[target-1]; // 변화량 계산 (Top-Down)
-//                    arr[target-1] = change;     // *원본 배열에도 변한값 업데이트
-//                    prefix_sum.update(1, 0, n-1, target-1, diff); // x가 아니라 dx! - 트리의 값 변경 (Top-Down)
-//                    break;
-//                case 2:
-//                    int last = Integer.parseInt(st.nextToken());
-//                    sb.append(prefix_sum.sum(1, 0, n-1, target-1, last-1)).append('\n');
-//                    break;
-//            }
-//        }
-//    }
+    public static void top_down() throws Exception{
+        for (int i = 0; i < m+k; i++) {
+            st = new StringTokenizer(br.readLine());
+            int option = Integer.parseInt(st.nextToken()), target = Integer.parseInt(st.nextToken());
+            switch (option) {
+                case 1:
+                    long change = Long.parseLong(st.nextToken()); // 주의! 변한값이 아니라 변화량을 반영해야 한다.
+                    long diff = change - arr[target-1]; // 변화량 계산 (Top-Down)
+                    arr[target-1] = change;     // *원본 배열에도 변한값 업데이트
+                    TopDown.update(1, 0, n-1, target-1, diff); // x가 아니라 dx! - 트리의 값 변경 (Top-Down)
+                    break;
+                case 2:
+                    int last = Integer.parseInt(st.nextToken());    // idx가 target-1 : arr이 [0]부터 시작이라 1->0을 의미하기 때문
+                    sb.append(TopDown.sum(1, 0, n-1, target-1, last-1)).append('\n');
+                    break;                                          // BIT에선 원본과 무관하게 1부터 시작하므로 상관 x
+            }
+        }
+    }
 
     public static void bottom_up() throws Exception{
         for (int i = 0; i < m+k; i++) {
@@ -51,11 +56,30 @@ public class Main{
                 case 1:
                     long change = Long.parseLong(st.nextToken());
                     arr[target-1] = change;     // *원본 배열에도 변한값 업데이트
-                    prefix_sum.update(target-1, change);
+                    BottomUp.update(target-1, change);
                     break;
                 case 2:
                     int last = Integer.parseInt(st.nextToken());
-                    sb.append(prefix_sum.sum(target-1, last-1)).append('\n');
+                    sb.append(BottomUp.sum(target-1, last-1)).append('\n');
+                    break;
+            }
+        }
+    }
+
+    public static void Fenwick() throws Exception{
+        for (int i = 0; i < m+k; i++) {
+            st = new StringTokenizer(br.readLine());
+            int option = Integer.parseInt(st.nextToken()), target = Integer.parseInt(st.nextToken());
+            switch (option) {
+                case 1:
+                    long change = Long.parseLong(st.nextToken()); // *주의 변화량 반영
+                    long diff = change - arr[target-1]; // 변화량 계산
+                    arr[target-1] = change;     // *원본 배열에도 변한값 업데이트
+                    BIT.update(target, diff);
+                    break;
+                case 2:
+                    int last = Integer.parseInt(st.nextToken());
+                    sb.append(BIT.range_sum(target, last)).append('\n');
                     break;
             }
         }
@@ -148,5 +172,43 @@ class SegmentTree {
         int mid = (start+end)/2;
         update(node*2, start, mid, idx, diff);  // 서브 트리 전체 업데이트
         update(node*2+1, mid+1, end, idx, diff);
+    }
+}
+
+class FenwickTree {
+
+    long[] tree;
+    int n;
+
+    public FenwickTree(long[] arr) {
+        n = arr.length;
+        tree = new long[n+1];
+        build(n, arr);
+    }
+
+    public void build(int n, long[] arr) {
+        for (int i = 1; i <= n; i++) {
+            update(i, arr[i-1]);
+        }
+    }
+
+    public void update(int idx, long diff) {  // *diff로 사용할 땐, 원본 배열도 메인 함수 내부에서 업데이트 주의
+        while (idx <= n) {
+            tree[idx] += diff;
+            idx += (idx & -idx);    // LSB를 더해서 길이 +1의 현재 노드를 포함하는 구간도 업데이트
+        }   // 3(110) : LSB(1), ([3] 구간합) -> LSB(4) : 001(4), [1, 2, 3, 4] 구간합
+    }
+
+    public long query(int idx) {
+        long sum = 0;
+        while (idx >= 1) {
+            sum+=tree[idx];
+            idx -= (idx & -idx); // LSB 빼서 길이 -1의 중복 없는 구간 접근 - 구간합에 반영
+        }   // 3(110) : LSB(1), ([3] 구간합) -> LSB(2) : 010(2), [1, 2] 구간합
+        return sum;
+    }
+
+    public long range_sum(int l, int r) {
+        return query(r) - query(l-1);
     }
 }
