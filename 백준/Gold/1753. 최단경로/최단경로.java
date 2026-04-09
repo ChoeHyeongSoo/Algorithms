@@ -25,7 +25,7 @@ public class Main{
         PriorityQueue<Node> pq = new PriorityQueue<>();
         int[] distance = new int[v+1];
         for (int i = 1; i <= v; i++) distance[i] = Integer.MAX_VALUE;
-        distance[k] = 0;
+        distance[k] = 0;    // 시작점부터 모든 노드와의 거리 : 1차원 배열
         pq.offer(new Node(k, 0));
 
         while (!pq.isEmpty()) {
@@ -33,7 +33,7 @@ public class Main{
             int tmp = curr.link;
             int w = curr.w;
 
-            if (distance[tmp]<w);
+            if (distance[tmp]>w) continue; // 갱신된 건 건너뛰기
 
             for (Node next : adj[tmp]) {
                 int d = distance[tmp] + next.w;
