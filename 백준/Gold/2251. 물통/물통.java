@@ -18,11 +18,14 @@ public class Main {
 		a = Integer.parseInt(st.nextToken());
 		b = Integer.parseInt(st.nextToken());
 		c = Integer.parseInt(st.nextToken());
-
-		visit_dfs  = new boolean[a+1][b+1][c+1];
+		capacity = new int[]{a, b, c};
 		
-		dfs (0, 0, c);
-
+//		visit_dfs  = new boolean[a+1][b+1][c+1];
+		visit_bfs  = new boolean[a+1][b+1][c+1];
+		
+//		dfs (0, 0, c);
+		bfs();
+		
 		StringBuilder sb = new StringBuilder();
 		Collections.sort(candidate);
 		for (int k : candidate) sb.append(k + " ");
@@ -30,6 +33,7 @@ public class Main {
 	}
 	
 	static int a, b, c;
+	static int[] capacity;
 	static List<Integer> candidate = new ArrayList<>();
 	static boolean[][][] visit_dfs;
 	static boolean[][][] visit_bfs;
@@ -37,7 +41,31 @@ public class Main {
 	static void bfs() {
 		
 		Deque<int[]> q = new ArrayDeque<>();
+		visit_bfs[0][0][c] = true;
+		q.offer(new int[] {0, 0, c}); // 현재 위치도 전달
 		
+		while (!q.isEmpty()) {
+
+			int[] curr = q.poll();
+			
+			if (curr[0]==0) candidate.add(curr[2]);
+			
+			for (int from = 0; from < 3; from++) {
+				for (int to = 0; to <3; to++) {
+					if (from==to) continue;
+					
+					int[] next = curr.clone();
+					int diff = Math.min(next[from], capacity[to] - next[to]);
+					
+					next[from]-=diff;
+					next[to]+=diff;
+					
+					if (visit_bfs[next[0]][next[1]][next[2]]) continue;
+					visit_bfs[next[0]][next[1]][next[2]] = true;
+					q.offer(next);
+				}
+			}
+		}
 	}
 	
 	static void dfs(int tmp_a, int tmp_b, int tmp_c) {
@@ -50,7 +78,6 @@ public class Main {
 		int c2b = Math.min(tmp_c, b-tmp_b);
 		dfs(tmp_a, tmp_b+c2b, tmp_c-c2b);
 		
-
 		int c2a = Math.min(tmp_c, a-tmp_a);
 		dfs(tmp_a + c2a, tmp_b, tmp_c-c2a);
 		
