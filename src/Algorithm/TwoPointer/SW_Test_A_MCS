@@ -1,0 +1,76 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Solution {
+	/*
+  길이 N의 두 수열 A, B가 주어진다. 각 수열의 값은 1<=X<=2000인 정수이다.
+  d(i, j, k)는 A의 i번째부터 길이 k인 부분 수열, B의 j번째부터 길이 K인 부분 수열의
+  값이 일치하는 인덱스 수를 의미한다.
+  예를 들어, A = [ 4 3 2 1 ], B = [ 2 1 4 3]이라고 할 때,
+  d(1, 3, 2) = d(3, 1, 2) = 2가 되고, 주어진 두 수열에서의 최대값이다.
+  최대가 되는 d(i, j, k) 값을 구하라.
+  */
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder ans = new StringBuilder();
+		int T = Integer.parseInt(br.readLine());
+		for (int tc = 1; tc <= T; tc++) {
+			
+			n = Integer.parseInt(br.readLine());
+			A = new int[n];
+			B = new int[n];
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			for (int i = 0; i < n; i++) A[i] = Integer.parseInt(st.nextToken());
+			st = new StringTokenizer(br.readLine());
+			for (int i = 0; i < n; i++) B[i] = Integer.parseInt(st.nextToken());
+			
+			
+			// 1. A 고정 : A의 포인터 값과 B의 포인터 값이 일치하는 B의 포인터 찾기
+			// +@) 값을 3번 찾았다 - 바로 넘어감. 탐색 지속 x
+			// 포인터 값이 큰 거 기준으로 길이 결정 : len - pointer_idx
+			// (현재 일치 + 남은 갯수) <= 최대 : 건너뛰기
+
+			int max = 0;
+			for (int i = 0; i < n; i++) {
+				int match = 0, k = n; // 3되면 중단 조건 충족
+				for (int j = 0; j < n; j++) {
+					
+					if (A[i]!=B[j]) continue;
+					match++;
+					int cnt = 0;
+					if (i <= j) {
+						
+						k = n-j;
+						
+						for (int check = 0; check < k; check++) {
+							if (A[i+check]==B[j+check]) cnt++;
+							if (cnt + k - check <= max) break;
+						}
+						max = Math.max(max, cnt);
+					} else {
+						
+						k = n-i;
+						
+						for (int check = 0; check < k; check++) {
+							if (A[i+check]==B[j+check]) cnt++;
+							if (cnt + k - check <= max) break;
+						}
+						max = Math.max(max, cnt);
+						
+					}
+					
+					if (match==3) break;
+				}
+				
+			}
+		
+			ans.append("#"+tc + " " + max + '\n');	
+		}
+		System.out.println(ans);
+	}
+	
+	static int n;
+	static int[] A, B;
+}
