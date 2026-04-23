@@ -1,0 +1,156 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+class Solution {
+    /*
+    출발지는 2, 목적지는 3으로 주어진다. 출발지는 좌표의 좌하단으로 고정된다.
+    1은 지나갈 수 있는 지탱점을 의미하며 좌-우 이동에는 연속된 경우 이동이 가능하다.
+    상-하 이동의 경우, 연속되지 않아도 지탱점이 존재하면 그 거리만큼 점프하여 이동할 수 있으며 이때 점프한 거리가 난이도가 된다.
+    목적지까지의 경로는 여러 개가 존재할 수 있으며, 모든 경로 중 최소 난이도가 해당 문제의 난이도다. 단, 도달할 수 없는 경우는 없다.
+    각 문제의 난이도를 구하라.
+    */
+    public static void main(String args[]) throws Exception {
+        StringBuilder ans = new StringBuilder();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
+        for (int test_case = 1; test_case <= T; test_case++) {
+            ans.append("#").append(test_case).append(" ");
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            n = Integer.parseInt(st.nextToken());
+            m = Integer.parseInt(st.nextToken());
+
+            map = new int[n][m];
+
+            for (int i = 0; i < n; i++) {
+                st = new StringTokenizer(br.readLine());
+                for (int j = 0; j < m; j++) {
+                    map[n - 1 - i][j] = Integer.parseInt(st.nextToken());   // 평소처럼 하려고 행 반전
+                    if (map[n - 1 - i][j] == 3) e = new Position(n - 1 - i, j, 0);
+                }
+            }
+            s = new Position(0, 0, 0);
+
+            level = bfs();
+
+            ans.append(level).append('\n');
+        }
+        System.out.print(ans);
+    }
+
+    static final int INF = Integer.MAX_VALUE;
+    static int n, m, level;
+    static Position s, e;
+    static int[][] map, dir = {{1, 0, -1, 0}, {0, 1, 0, -1}};
+
+    static int bfs() {
+
+        PriorityQueue<Position> pq = new PriorityQueue<>((a, b) -> a.level - b.level);
+        int[][] cost = new int[n][m];
+        for (int[] r : cost) {
+            Arrays.fill(r, INF);
+        }
+        cost[0][0] = 0;
+        pq.offer(s);
+
+        while (!pq.isEmpty()) { // 레벨 기준 다익스트라
+
+            Position curr = pq.poll();
+
+            if (cost[curr.r][curr.c] < curr.level) continue;
+
+            if (curr.r == e.r && curr.c == e.c) return curr.level; // 가장 먼저 나온 도착지 노드 반환
+
+            for (int d = 0; d < 4; d++) {
+
+                int nr = curr.r + dir[0][d];
+                int nc = curr.c + dir[1][d];
+
+                if (!isIn(nr, nc)) continue;
+                if (cost[nr][nc] <= curr.level) continue;
+
+                if (d == 0 || d == 2) { // 상-하 / 좌-우 케이스 분리
+
+                    if (map[nr][nc] == 1 || map[nr][nc] == 3) {
+                        // 0인 경우, 1로 레벨 설정 - 이미 점프했으면 1은 무의미
+                        int next_level = Math.max(curr.level, 1);
+                        if (cost[nr][nc] > next_level) {
+                            cost[nr][nc] = next_level;
+                            pq.offer(new Position(nr, nc, next_level));
+                        }
+
+                    } else {
+                        int jump = isJump(curr.r, curr.c, d);
+                        if (jump > -1) {
+                            nr = curr.r + dir[0][d] * jump; // 점프 반영
+                            int next_level = Math.max(curr.level, jump);   // 점프한 것과 현재 레벨 중 큰 값이 현재 경로의 난이도
+                            if (cost[nr][nc] > next_level) {
+                                cost[nr][nc] = next_level;
+                                pq.offer(new Position(nr, nc, next_level));
+                            }
+                        }
+                    }
+
+                } else {
+
+                    if (map[nr][nc] == 1 || map[nr][nc] == 3) {
+                        if (cost[nr][nc] > curr.level) {
+                            cost[nr][nc] = curr.level;
+                            pq.offer(new Position(nr, nc, curr.level));
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        return -1;
+    }
+
+
+    static int isJump(int r, int c, int dir) {  // 점프 가능한지 거리 반환
+
+        int tmp_level = -1;
+
+        switch (dir) {
+
+            case 0:
+                for (int h = r + 1; h < n; h++) {
+                    if (map[h][c] == 1 || map[h][c] == 3) { // 가장 가까운 위치로 점프
+                        tmp_level = h - r;
+                        break;
+                    }
+                }
+                break;
+
+            case 2:
+                for (int h = r - 1; h >= 0; h--) {
+                    if (map[h][c] == 1 || map[h][c] == 3) { // 3도 처리해야 하는 거 주의!!!
+                        tmp_level = r - h;
+                        break;
+                    }
+                }
+                break;
+
+        }
+
+        return tmp_level;
+    }
+
+    static boolean isIn(int r, int c) {
+        return (r >= 0 && r < n && c >= 0 && c < m);
+    }
+
+}
+
+class Position {
+
+    int r, c, level;
+
+    public Position(int r, int c, int level) {
+        this.r = r;
+        this.c = c;
+        this.level = level;
+    }
+}
