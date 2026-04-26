@@ -1,0 +1,54 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+class Solution {
+    /*
+    길이 N의 두 수열 A, B가 주어진다. 각 수열의 값은 1<=X<=2000인 정수이다.
+    d(i, j, k)는 A의 i번째부터 길이 k인 부분 수열, B의 j번째부터 길이 K인 부분 수열의
+    값이 일치하는 인덱스 수를 의미한다.
+    예를 들어, A = [ 4 3 2 1 ], B = [ 2 1 4 3]이라고 할 때,
+    d(1, 3, 2) = d(3, 1, 2) = 2가 되고, 주어진 두 수열에서의 최대값이다.
+    최대가 되는 d(i, j, k) 값을 구하라.
+    */
+    public static void main(String args[]) throws Exception {
+        StringBuilder ans = new StringBuilder();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
+        for (int test_case = 1; test_case <= T; test_case++) {
+            ans.append("#").append(test_case).append(" ");
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int n = Integer.parseInt(st.nextToken());
+            int[] A = new int[n], B = new int[n];
+
+            st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < n; i++) A[i] = Integer.parseInt(st.nextToken());
+
+            st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < n; i++) B[i] = Integer.parseInt(st.nextToken());
+
+
+            int max = 0;
+            // 슬라이딩 윈도우 적용 : 가능한 모든 i, j 조합 시간복잡도 O(N^2) / 공간 복잡도 O(1)로 탐색
+            //  range : B 끝단이 A 앞단과 겹침 <= diff <= B 앞단이 A 끝단과 겹침
+            for (int diff = -(n - 1); diff <= n - 1; diff++) {
+                int curr = 0;
+
+                for (int i = 0; i < n; i++) {
+
+                    int j = i + diff;  // *DP의 대각선만 훑는 것과 동일
+
+                    if (j < 0 || j >= n) continue;
+
+                    if (A[i] == B[j]) { // DP의 table[i-1][j-1] + 1 역할
+                        curr++;
+                        max = Math.max(max, curr);
+                    }   // != 일 때, max(table[i][j-1], table[i-1][j])를 생략
+                }
+            }
+
+            ans.append(max).append('\n');
+        }
+        System.out.print(ans);
+    }
+}
