@@ -23,7 +23,7 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name "ChoeHyeongSoo[github-actions]"
+          git config --global user.name "CHS[github-actions]"
           git config --global user.email "sam000208@naver.com"
 
       - name: Run Node.js Sync Script

@@ -28,7 +28,7 @@ async function getRecentSubmissions() {
         body: JSON.stringify({
             query: `
             query recentAcSubmissions {
-                recentAcSubmissionList(username: "", limit: 20) {
+                recentAcSubmissionList(username: "Eugene603", limit: 20) {
                     id
                     statusDisplay
                     runtime
@@ -148,7 +148,7 @@ async function main() {
             console.log(`커밋 성공: ${commitSubject}`);
         } catch (error) {
             // 변경 사항이 없어서 커밋할 게 없는 경우 무시
-            console.log(`변경 사항 없음 (스킵): ${folderName}`);
+            console.log(`변경 사항 없음: ${folderName}`);
         }
     }
 }
