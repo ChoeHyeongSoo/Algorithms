@@ -1,5 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
+const util = require('util');
+const execAsync = util.promisify(require('child_process').exec);
 
 // 환경변수 및 기본 설정
 const LEETCODE_SESSION = process.env.LEETCODE_SESSION;
@@ -29,6 +31,8 @@ async function getRecentSubmissions() {
                 recentAcSubmissionList(username: "", limit: 20) {
                     id
                     statusDisplay
+                    runtime
+                    memory
                 }
             }
             `
@@ -37,7 +41,7 @@ async function getRecentSubmissions() {
 
     const data = await response.json();
     const submissions = data.data?.recentAcSubmissionList || [];
-    return submissions.filter(sub => sub.statusDisplay === 'Accepted').map(sub => sub.id);
+    return submissions.filter(sub => sub.statusDisplay === 'Accepted');
 }
 
 // 제출 ID로 상세 코드 및 난이도 가져오기
@@ -54,11 +58,18 @@ async function getSubmissionDetails(id) {
                 submissionDetails(submissionId: $id) {
                     code
                     question {
+                        questionFrontendId
+                        title
                         titleSlug
+                        content
                         difficulty
+                        topicTags {
+                            name
+                        }
                     }
                     lang {
                         name
+                        verboseName
                     }
                 }
             }
@@ -87,27 +98,57 @@ async function main() {
         const code = details.code;
         const difficulty = details.question.difficulty;
         const problemSlug = details.question.titleSlug;
+        const title = details.question.title;
+        const frontendId = details.question.questionFrontendId;
+        const content = details.question.content;
+        const runtime = sub.runtime || "N/A";
+        const memory = sub.memory || "N/A";
+
         const langName = details.lang.name;
 
-        const ext = EXTENSION_MAP[langName] || '.txt';
-        const fileName = `Solution${ext}`;
+        // 알고리즘 분류 추가
+        const topics = details.question.topicTags.map(tag => tag.name).join(', ') || "None";
+
+        // 폴더 및 파일명
+        const safeTitle = title.replace(/[<>:"\/\\|?*]/g, '');
+        const folderName = `${frontendId}. ${safeTitle}`; // 예: 718. Maximum Length of...
 
         // 폴더 경로 생성
-        const savePath = path.join(TARGET_FOLDER, difficulty, problemSlug);
+        const savePath = path.join(TARGET_FOLDER, difficulty, folderName);
 
         // 폴더 없으면 생성 (recursive 옵션 : 상위 폴더까지 한 번에 생성)
         await fs.mkdir(savePath, { recursive: true });
 
-        const filePath = path.join(savePath, fileName);
+        const ext = EXTENSION_MAP[details.lang.name] || '.txt';
+        const codeFilePath = path.join(savePath, `${safeTitle}${ext}`);
+        const readmeFilePath = path.join(savePath, 'README.md');
+
+        // README 내용 구성! 커스터마이징 가능 ==============================================================================================
+        const readmeContent = `# [${difficulty}] [${title}](https://leetcode.com/problems/${problemSlug}/) - ${frontendId}\n\n`
+            + `### 성능 요약\n메모리: ${memory}, 시간: ${runtime}\n\n`
+            + `### 분류\n${topics}\n\n`
+            + `### 문제 설명\n${content}\n`;
+
+        await fs.writeFile(codeFilePath, code, 'utf8');
+        await fs.writeFile(readmeFilePath, readmeContent, 'utf8');
+
+        // 개별 Git 커밋 진행
+        const commitSubject = `[${frontendId}] ${title} - ${langName} (${runtime}, ${memory})`;
+        const commitBody = `[Category]\n${topics}`;
+        const fullCommitMsg = `${commitSubject}\n\n${commitBody}`;
 
         try {
-            // 파일 존재 확인
-            await fs.access(filePath);
-            console.log(`이미 존재함: ${filePath}`);
-        } catch {
-            // 파일이 없으므로 새로 쓰기 (utf8 인코딩)
-            await fs.writeFile(filePath, code, 'utf8');
-            console.log(`새로 저장됨: ${filePath}`);
+            // 해당 문제의 폴더만 Staging
+            await execAsync(`git add "${savePath}"`);
+
+            // 따옴표 깨짐 방지 : 커밋 메시지를 임시 파일로 만들어 사용
+            await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
+            await execAsync(`git commit -F .commit_msg.txt`);
+
+            console.log(`커밋 성공: ${commitSubject}`);
+        } catch (error) {
+            // 변경 사항이 없어서 커밋할 게 없는 경우 무시
+            console.log(`변경 사항 없음 (스킵): ${folderName}`);
         }
     }
 }
