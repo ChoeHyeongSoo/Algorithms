@@ -13,7 +13,7 @@ async function getRecentSubmissions() {
             'Cookie': `LEETCODE_SESSION=${LEETCODE_SESSION};`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
+        body: JSON.stringify({  // 💡username 수정
             query: `
             query recentAcSubmissions {
                 recentAcSubmissionList(username: "Eugene603", limit: 20) {
@@ -77,12 +77,10 @@ async function main() {
     }
 
     console.log("리트코드 API에서 최근 통과 기록을 조회합니다...");
-    // 💡 변수명 통일 완료!
     const acceptedSubmissions = await getRecentSubmissions();
     console.log(`✅ 통과한 문제 ${acceptedSubmissions.length}개 발견`);
 
     for (const sub of acceptedSubmissions) {
-        // 💡 sub.id 로 정확하게 넘기도록 수정 완료!
         const details = await getSubmissionDetails(sub.id);
         if (!details) continue;
 

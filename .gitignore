@@ -28,3 +28,7 @@ replay_pid*
 
 #작업시 백준 폴더 제외
 *.백준/
+
+node_modules/
+.commit_msg.txt
+.DS_Store
