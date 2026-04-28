@@ -26,7 +26,8 @@ async function getRecentSubmissions() {
     });
 
     const data = await response.json();
-    console.log("1. 리트코드 목록 요청 응답:", JSON.stringify(data).substring(0, 250));
+    // 디버깅용 로그 : 목록 확인
+    // console.log("1. 리트코드 목록 요청 응답:", JSON.stringify(data).substring(0, 250));
     const submissions = data.data?.recentAcSubmissionList || [];
     return submissions.filter(sub => sub.statusDisplay === 'Accepted');
 }
@@ -100,26 +101,28 @@ async function main() {
         const codeFilePath = path.join(savePath, `${safeTitle}${ext}`);
         const readmeFilePath = path.join(savePath, 'README.md');
 
-        // 💡 titleSlug, questionFrontendId 등 변수명 꼬인 것 완벽하게 수정
+        // 리드미 커스터마이징 부분
         const readmeContent = `# [${difficulty}] [${title}](https://leetcode.com/problems/${titleSlug}/) - ${questionFrontendId}\n\n`
             + `### 성능 요약\n메모리: ${memory}, 시간: ${runtime}\n\n`
             + `### 분류\n${topics}\n\n`
             + `### 문제 설명\n${content}\n`;
+        // ===================================================================================================================================
 
         await fs.writeFile(codeFilePath, code, 'utf8');
         await fs.writeFile(readmeFilePath, readmeContent, 'utf8');
 
+        // 커밋 커스터마이징 부분
         const fullCommitMsg = `[${questionFrontendId}] ${title} - ${lang.verboseName || lang.name} (${runtime}, ${memory})\n\n[Category]\n${topics}`;
 
         try {
-            // 💡 터질 뻔했던 execSync를 안전한 execAsync로 전부 교체 완료!
             await execAsync(`git add "${savePath}"`);
             await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
             await execAsync(`git commit -F .commit_msg.txt`);
             console.log(`✅ 커밋 성공: ${folderName}`);
         } catch (error) {
-            console.log(`변경사항 없음 (스킵): ${folderName}`);
+            console.log(`변경사항 x: ${folderName}`);
         }
+        // ===================================================================================================================================
     }
 }
 
