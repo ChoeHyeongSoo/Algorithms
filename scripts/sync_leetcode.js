@@ -31,8 +31,6 @@ async function getRecentSubmissions() {
                 recentAcSubmissionList(username: "Eugene603", limit: 20) {
                     id
                     statusDisplay
-                    runtime
-                    memory
                 }
             }
             `
@@ -40,6 +38,8 @@ async function getRecentSubmissions() {
     });
 
     const data = await response.json();
+    // #디버깅용 코드 :
+    console.log("1. 리트코드 목록 요청 응답:", JSON.stringify(data).substring(0, 250));
     const submissions = data.data?.recentAcSubmissionList || [];
     return submissions.filter(sub => sub.statusDisplay === 'Accepted');
 }
@@ -57,6 +57,8 @@ async function getSubmissionDetails(id) {
             query submissionDetails($id: Int!) {
                 submissionDetails(submissionId: $id) {
                     code
+                    memory
+                    runtime
                     question {
                         questionFrontendId
                         title
@@ -90,36 +92,46 @@ async function main() {
 
     console.log("리트코드 API에서 최근 통과 기록을 조회합니다...");
     const acceptedIds = await getRecentSubmissions();
+    console.log(`✅ 통과한 문제 ${acceptedSubmissions.length}개 발견`);
 
     for (const subId of acceptedIds) {
         const details = await getSubmissionDetails(subId);
         if (!details) continue;
 
-        const code = details.code;
-        const difficulty = details.question.difficulty;
-        const problemSlug = details.question.titleSlug;
-        const title = details.question.title;
-        const frontendId = details.question.questionFrontendId;
-        const content = details.question.content;
-        const runtime = sub.runtime || "N/A";
-        const memory = sub.memory || "N/A";
+        // const code = details.code;
+        // const difficulty = details.question.difficulty;
+        // const problemSlug = details.question.titleSlug;
+        // const title = details.question.title;
+        // const frontendId = details.question.questionFrontendId;
+        // const content = details.question.content;
+        // const runtime = sub.runtime || "N/A";
+        // const memory = sub.memory || "N/A";
 
         const langName = details.lang.name;
 
         // 알고리즘 분류 추가
-        const topics = details.question.topicTags.map(tag => tag.name).join(', ') || "None";
+        // const topics = details.question.topicTags.map(tag => tag.name).join(', ') || "None";
 
-        // 폴더 및 파일명
+        // // 폴더 및 파일명
+        // const safeTitle = title.replace(/[<>:"\/\\|?*]/g, '');
+        // const folderName = `${frontendId}. ${safeTitle}`; // 예: 718. Maximum Length of...
+        //
+        // // 폴더 경로 생성
+        // const savePath = path.join(TARGET_FOLDER, difficulty, folderName);
+
+        const { code, question, lang, memory, runtime } = details;
+        const { difficulty, title, titleSlug, content, questionFrontendId, topicTags } = question;
         const safeTitle = title.replace(/[<>:"\/\\|?*]/g, '');
-        const folderName = `${frontendId}. ${safeTitle}`; // 예: 718. Maximum Length of...
-
-        // 폴더 경로 생성
+        const folderName = `${questionFrontendId}. ${safeTitle}`;
         const savePath = path.join(TARGET_FOLDER, difficulty, folderName);
 
         // 폴더 없으면 생성 (recursive 옵션 : 상위 폴더까지 한 번에 생성)
         await fs.mkdir(savePath, { recursive: true });
 
-        const ext = EXTENSION_MAP[details.lang.name] || '.txt';
+        const ext = { 'java': '.java', 'python3': '.py', 'python': '.py', 'cpp': '.cpp', 'javascript': '.js' }[lang.name] || '.txt';
+        const topics = topicTags ? topicTags.map(t => t.name).join(', ') : "None";
+
+        // const ext = EXTENSION_MAP[details.lang.name] || '.txt';
         const codeFilePath = path.join(savePath, `${safeTitle}${ext}`);
         const readmeFilePath = path.join(savePath, 'README.md');
 
@@ -135,20 +147,30 @@ async function main() {
         // 개별 Git 커밋 진행
         const commitSubject = `[${frontendId}] ${title} - ${langName} (${runtime}, ${memory})`;
         const commitBody = `[Category]\n${topics}`;
-        const fullCommitMsg = `${commitSubject}\n\n${commitBody}`;
+        // const fullCommitMsg = `${commitSubject}\n\n${commitBody}`;
+        const fullCommitMsg = `[${questionFrontendId}] ${title} - ${lang.verboseName || lang.name} (${runtime}, ${memory})\n\n[Category]\n${topics}`;
+
+        // try {
+        //     // 해당 문제의 폴더만 Staging
+        //     await execAsync(`git add "${savePath}"`);
+        //
+        //     // 따옴표 깨짐 방지 : 커밋 메시지를 임시 파일로 만들어 사용
+        //     await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
+        //     await execAsync(`git commit -F .commit_msg.txt`);
+        //
+        //     console.log(`커밋 성공: ${commitSubject}`);
+        // } catch (error) {
+        //     // 변경 사항이 없어서 커밋할 게 없는 경우 무시
+        //     console.log(`변경 사항 없음: ${folderName}`);
+        // }
 
         try {
-            // 해당 문제의 폴더만 Staging
-            await execAsync(`git add "${savePath}"`);
-
-            // 따옴표 깨짐 방지 : 커밋 메시지를 임시 파일로 만들어 사용
+            execSync(`git add "${savePath}"`);
             await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
-            await execAsync(`git commit -F .commit_msg.txt`);
-
-            console.log(`커밋 성공: ${commitSubject}`);
+            execSync(`git commit -F .commit_msg.txt`);
+            console.log(`✅ 커밋 성공: ${folderName}`);
         } catch (error) {
-            // 변경 사항이 없어서 커밋할 게 없는 경우 무시
-            console.log(`변경 사항 없음: ${folderName}`);
+            console.log(`변경사항 없음 (스킵): ${folderName}`);
         }
     }
 }
