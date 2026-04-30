@@ -1,7 +1,7 @@
 # [Medium] [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) - 3
 
 ### 성능 요약
-메모리: 44260000, 시간: 1
+메모리: 44.3 MB, 시간: 1 ms
 
 ### 분류
 Hash Table, String, Sliding Window

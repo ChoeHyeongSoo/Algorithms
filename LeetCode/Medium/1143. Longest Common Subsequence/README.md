@@ -1,7 +1,7 @@
 # [Medium] [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/) - 1143
 
 ### 성능 요약
-메모리: 53716000, 시간: 22
+메모리: 53.7 MB, 시간: 22 ms
 
 ### 분류
 String, Dynamic Programming

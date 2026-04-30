@@ -1,7 +1,7 @@
 # [Medium] [Maximum Length of Repeated Subarray](https://leetcode.com/problems/maximum-length-of-repeated-subarray/) - 718
 
 ### 성능 요약
-메모리: 45364000, 시간: 36
+메모리: 45.4 MB, 시간: 36 ms
 
 ### 분류
 Array, Binary Search, Dynamic Programming, Sliding Window, Rolling Hash, Hash Function

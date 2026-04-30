@@ -1,7 +1,7 @@
 # [Easy] [Flood Fill](https://leetcode.com/problems/flood-fill/) - 733
 
 ### 성능 요약
-메모리: 46832000, 시간: 1
+메모리: 46.8 MB, 시간: 1 ms
 
 ### 분류
 Array, Depth-First Search, Breadth-First Search, Matrix
