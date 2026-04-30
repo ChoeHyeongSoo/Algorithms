@@ -114,7 +114,7 @@ async function main() {
         await fs.writeFile(readmeFilePath, readmeContent, 'utf8');
 
         // 커밋 커스터마이징 부분
-        const fullCommitMsg = `[${questionFrontendId}] ${title} - ${lang.verboseName || lang.name} (${runtime}, ${memory})\n\n[Category]\n${topics}`;
+        const fullCommitMsg = `${questionFrontendId}. ${title} - ${lang.verboseName || lang.name} (${formattedMemory}, ${formattedTime})\n\n[Category]\n${topics}`;
 
         try {
             await execAsync(`git add "${savePath}"`);
