@@ -1,7 +1,7 @@
 # [Medium] [Implement Trie (Prefix Tree)](https://leetcode.com/problems/implement-trie-prefix-tree/) - 208
 
 ### 성능 요약
-메모리: 62.4 MB, 시간: 33 ms
+메모리: 59.5 MB, 시간: 33 ms
 
 ### 분류
 Hash Table, String, Design, Trie
