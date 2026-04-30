@@ -99,9 +99,13 @@ async function main() {
         const codeFilePath = path.join(savePath, `${safeTitle}${ext}`);
         const readmeFilePath = path.join(savePath, 'README.md');
 
+        // 메모리 & 시간 포맷 수정
+        const formattedMemory = (memory / (1024 * 1024)).toFixed(1) + ' MB';
+        const formattedTime = runtime + ' ms';
+
         // 리드미 커스터마이징 부분
         const readmeContent = `# [${difficulty}] [${title}](https://leetcode.com/problems/${titleSlug}/) - ${questionFrontendId}\n\n`
-            + `### 성능 요약\n메모리: ${memory}, 시간: ${runtime}\n\n`
+            + `### 성능 요약\n메모리: ${formattedMemory}, 시간: ${formattedTime}\n\n`
             + `### 분류\n${topics}\n\n`
             + `### 문제 설명\n${content}\n`;
         // ===================================================================================================================================
