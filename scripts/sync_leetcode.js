@@ -152,17 +152,9 @@ async function main() {
         } catch (error) {
             if (error.stdout) console.log(`ℹ️ Git 메시지: ${error.stdout}`);
             if (error.stderr) console.error(`⚠️ Git 에러내용: ${error.stderr}`);
-            console.log(`❌ 변경사항 없음 혹은 커밋 실패: ${folderName}`);
+            console.log(`❌ 변경사항 x or 커밋 실패: ${folderName}`);
         }
         
-        // try {
-        //     await execAsync(`git add "${savePath}"`);
-        //     await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
-        //     await execAsync(`git commit -F .commit_msg.txt`);
-        //     console.log(`✅ 커밋 성공: ${folderName}`);
-        // } catch (error) {
-        //     console.log(`변경사항 x: ${folderName}`);
-        // }
         // ===================================================================================================================================
     }
 }
