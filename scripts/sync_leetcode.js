@@ -134,14 +134,35 @@ async function main() {
         // 커밋 커스터마이징 부분
         const fullCommitMsg = `${questionFrontendId}. ${title} - ${lang.verboseName || lang.name} (${formattedMemory}, ${formattedTime})\n\n[Category]\n${topics}`;
 
-        try {
-            await execAsync(`git add "${savePath}"`);
+        try { // 오류 확인용 로깅
+            const filesInFolder = await fs.readdir(savePath);
+            console.log(`📂 [디버그] 폴더 경로: ${savePath}`);
+            console.log(`📄 [디버그] 생성된 파일들: ${filesInFolder.join(', ')}`);
+
+            console.log(`🔍 [디버그] Git Status 체크 시작`);
+            const { stdout: statusOut } = await execAsync('git status');
+            console.log(statusOut);
+
+            await execAsync(`git add .`); 
+            
             await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
             await execAsync(`git commit -F .commit_msg.txt`);
             console.log(`✅ 커밋 성공: ${folderName}`);
+            
         } catch (error) {
-            console.log(`변경사항 x: ${folderName}`);
+            if (error.stdout) console.log(`ℹ️ Git 메시지: ${error.stdout}`);
+            if (error.stderr) console.error(`⚠️ Git 에러내용: ${error.stderr}`);
+            console.log(`❌ 변경사항 없음 혹은 커밋 실패: ${folderName}`);
         }
+        
+        // try {
+        //     await execAsync(`git add "${savePath}"`);
+        //     await fs.writeFile('.commit_msg.txt', fullCommitMsg, 'utf8');
+        //     await execAsync(`git commit -F .commit_msg.txt`);
+        //     console.log(`✅ 커밋 성공: ${folderName}`);
+        // } catch (error) {
+        //     console.log(`변경사항 x: ${folderName}`);
+        // }
         // ===================================================================================================================================
     }
 }
