@@ -91,7 +91,7 @@ async function main() {
         console.log(`▶ [${sub.id}] 상세 정보 요청 중...`);
         const details = await getSubmissionDetails(sub.id);
         if (!details) {
-            console.log(`❌ [${sub.id}] 상세 코드를 못 가져왔습니다.');
+            console.log(`❌ [${sub.id}] 상세 코드를 못 가져왔습니다.`);
             continue;
         }
         
