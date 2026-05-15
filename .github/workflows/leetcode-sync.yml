@@ -29,9 +29,10 @@ jobs:
       - name: Run Node.js Sync Script
         env:
           LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }} # 깃허브 시크릿에서 가져옴
-        run: node scripts/sync_leetcode.js
+        run: node scripts/sync_leetcode.js || echo "스크립트 실행 중 일부 생략 주의"
 
       - name: Push changes
+        if: always() # 로그 추적용
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
