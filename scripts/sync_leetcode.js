@@ -88,9 +88,13 @@ async function main() {
     console.log(`✅ 통과한 문제 ${acceptedSubmissions.length}개 발견`);
 
     for (const sub of acceptedSubmissions) {
+        console.log(`▶ [${sub.id}] 상세 정보 요청 중...`);
         const details = await getSubmissionDetails(sub.id);
-        if (!details) continue;
-
+        if (!details) {
+            console.log(`❌ [${sub.id}] 상세 코드를 못 가져왔습니다.');
+            continue;
+        }
+        
         const { code, question, lang, memory, runtime } = details;
         const { difficulty, title, titleSlug, content, questionFrontendId, topicTags } = question;
 
