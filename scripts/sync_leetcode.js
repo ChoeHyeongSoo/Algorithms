@@ -6,6 +6,13 @@ const execAsync = util.promisify(require('child_process').exec);
 const LEETCODE_SESSION = process.env.LEETCODE_SESSION;
 const TARGET_FOLDER = 'LeetCode';
 
+const romanToNum = { // title 로마자 핸들링
+    '\u2160': '1', '\u2161': '2', '\u2162': '3', '\u2163': '4', '\u2164': '5',
+    '\u2165': '6', '\u2166': '7', '\u2167': '8', '\u2168': '9', '\u2169': '10',
+    '\u2170': '1', '\u2171': '2', '\u2172': '3', '\u2173': '4', '\u2174': '5',
+    '\u2175': '6', '\u2176': '7', '\u2177': '8', '\u2178': '9', '\u2179': '10'
+};
+
 async function getRecentSubmissions() {
     const response = await fetch('https://leetcode.com/graphql', {
         method: 'POST',
@@ -87,7 +94,18 @@ async function main() {
         const { code, question, lang, memory, runtime } = details;
         const { difficulty, title, titleSlug, content, questionFrontendId, topicTags } = question;
 
-        const safeTitle = title.replace(/[<>:"\/\\|?*]/g, '');
+        let safeTitle = title; // title 정제 로직 수정
+
+        Object.keys(romanToNum).forEach(roman => {
+            safeTitle = safeTitle.replace(new RegExp(roman, 'g'), romanToNum[roman]);
+        });
+
+        safeTitle = safeTitle
+            .replace(/[<>:"\/\\|?*]/g, '') // OS 금지 문자 제거
+            .replace(/\s+/g, ' ')          // 중복 공백 하나로 축소
+            .replace(/\.$/, '')            // 끝에 붙은 마침표 제거
+            .trim();                       // 양끝 공백 제거
+        
         const folderName = `${questionFrontendId}. ${safeTitle}`;
         const savePath = path.join(TARGET_FOLDER, difficulty, folderName);
 
