@@ -11,23 +11,24 @@ class Solution {
 
         for (String s : cities) {
 
-            if (cache.isIn.getOrDefault(s.toLowerCase(), false)) {
-                cache.update(s.toLowerCase());
+            String key = s.toLowerCase();
+            Node curr = cache.info.computeIfAbsent(key, k -> new Node()); // 맵에 없는 경우 추가
+
+            if (curr.prev == null) { // 캐시에 없는 상태
+                cache.insert(curr);
+                cache.info.put(key, curr);
+                ans+=5;
+                if (++cache.capacity > cacheSize) { // 용량 초과 경우 앞 하나 제거
+                    cache.delete();
+                    cache.capacity--;
+                }
+            } else {
+                cache.update(curr); // 캐시 내부 LRU 업데이트
                 ans++;
             }
-            else {
-                cache.insert(new Node(s.toLowerCase()));
-                ans+=5;
-            }
-
-            if (cache.capacity>cacheSize) cache.delete();
         }
 
         return ans;
-    }
-
-    public void main(String[] args) {
-        System.out.println(solution(3, new String[]{"Jeju", "Pangyo", "Seoul", "Jeju", "Pangyo", "Seoul", "Jeju", "Pangyo", "Seoul"}));
     }
 
 }
@@ -36,7 +37,7 @@ class Cache {
 
     Node head = new Node(), tail = new Node();
     int capacity = 0;
-    Map<String, Boolean> isIn = new HashMap<>();
+    Map<String, Node> info = new HashMap<>();
 
     public Cache() {
         head.next = tail;
@@ -49,8 +50,6 @@ class Cache {
         v.next = tail;
         tail.prev.next = v;
         tail.prev = v;
-        isIn.put(v.city, true);
-        capacity++;
     }
 
     public void delete() {
@@ -58,35 +57,19 @@ class Cache {
         Node target = head.next;
         target.next.prev = head;
         head.next = target.next;
-        isIn.put(target.city, false);
-        capacity--;
+
+        target.prev = null;
     }
 
-    public void update(String s) {
+    public void update(Node v) {
 
-        Node curr = head.next;
+        v.next.prev=v.prev; // 현재 위치의 앞, 뒤 연결
+        v.prev.next=v.next;
 
-        while(!curr.city.equals(s)) curr=curr.next;
-
-        curr.next.prev=curr.prev;
-        curr.prev.next=curr.next;
-
-        curr.prev = tail.prev;
-        curr.next = tail;
-
-        tail.prev.next = curr;
-        tail.prev = curr;
+        insert(v); // 현재 노드를 마지막에 추가
     }
 }
 
 class Node {
-    String city;
     Node prev, next;
-
-    public Node() {
-    }
-
-    public Node(String city) {
-        this.city = city;
-    }
 }
