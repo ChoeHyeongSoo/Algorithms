@@ -32,3 +32,6 @@ replay_pid*
 node_modules/
 .commit_msg.txt
 .DS_Store
+
+# JetBrains IDE
+.idea/
