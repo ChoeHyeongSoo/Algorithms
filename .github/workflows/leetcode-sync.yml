@@ -31,6 +31,16 @@ jobs:
           LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }} # 깃허브 시크릿에서 가져옴
         run: node scripts/sync_leetcode.js || echo "스크립트 실행 중 일부 생략 주의"
 
+      - name: Update README Stats
+        run: |
+          node scripts/UpdateStats.js
+          if ! git diff --quiet -- README.md; then
+            git add README.md
+            git commit -m "docs: update README stats"
+          else
+            echo "README 변경 없음, 커밋 생략"
+          fi
+
       - name: Push changes
         if: always() # 로그 추적용
         env:
